@@ -13,3 +13,7 @@ variable "service" {
 variable "group" {
   description = "Group name of the account"
 }
+
+variable "account_id" {
+  description = "Account ID of this account"
+}

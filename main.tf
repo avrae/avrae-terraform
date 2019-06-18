@@ -40,3 +40,13 @@ module "ecr_avrae_service" {
   group    = "${var.group}"
   ecr_name = "avrae/avrae-service"
 }
+
+# IAM Deploy User
+module "iam_deploy" {
+  source = "./modules/iam-deploy"
+  
+  env         = "${var.env}"
+  service     = "${var.service}"
+  region      = "${var.region}"
+  account_id  = "${var.account_id}"
+}
