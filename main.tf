@@ -8,7 +8,8 @@ terraform {
   }
 }
 
-module "ecr" {
+# ECR - Taine
+module "ecr_taine" {
   source  = "app.terraform.io/Fandom/ecr/aws"
   version = "1.0.0"
 
