@@ -4,7 +4,7 @@ provider "aws" {
 
 terraform {
   backend "atlas" {
-      name = "fandom/avrae"
+      name = "Fandom/avrae"
   }
 }
 
@@ -49,4 +49,35 @@ module "iam_deploy" {
   service     = "${var.service}"
   region      = "${var.region}"
   account_id  = "${var.account_id}"
+}
+
+# VPC
+module "ecs_vpc" {
+  source          = "app.terraform.io/Fandom/ddb_ecs_vpc/aws"
+  version         = "2.0.0"
+
+  env             = "${var.env}"
+  service         = "${var.service}"
+  region          = "${var.region}"
+  vpc_env         = "production"
+  network_range   = "10.124.15.0/24"
+  common_name     = "Avrae"
+}
+
+# ECS - Taine
+module "ecs_taine" {
+  source  = "./modules/ecs-fargate-bot"
+
+  service               = "${var.service}"
+  env                   = "${var.env}"
+  group                 = "${var.group}"
+  region                = "${var.region}"
+  ecs_role_policy_arns  = [
+                            "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
+                            "arn:aws:iam::aws:policy/CloudWatchFullAccess",
+                            "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+                          ]
+  docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/taine:live"
+  private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
+  vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
 }
