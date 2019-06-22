@@ -81,7 +81,7 @@ module "ecs_taine" {
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   environment_variables = [
-                            {"name" = "DISCORD_TOKEN", "value" = ""},
-                            {"name" = "GITHUB_TOKEN", "value" = ""}
+                            {"name" = "DISCORD_TOKEN", "value" = "${var.taine_discord_token}"},
+                            {"name" = "GITHUB_TOKEN", "value" = "${var.taine_github_token}"}
                           ]
 }
