@@ -80,4 +80,8 @@ module "ecs_taine" {
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/taine:live"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
+  environment_variables = [
+                            {"name" = "DISCORD_TOKEN", "value" = ""},
+                            {"name" = "GITHUB_TOKEN", "value" = ""}
+                          ]
 }
