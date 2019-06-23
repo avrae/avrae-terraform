@@ -103,7 +103,7 @@ module "ecs_taine" {
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   environment_variables = [
-                            {"name" = "DISCORD_TOKEN", "value_from" = "${aws_secretsmanager_secret.taine_discord_token.arn}"},
-                            {"name" = "GITHUB_TOKEN", "value_from" = "${aws_secretsmanager_secret.taine_github_token.arn}"}
+                            {"name" = "DISCORD_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_discord_token.arn}"},
+                            {"name" = "GITHUB_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_github_token.arn}"}
                           ]
 }
