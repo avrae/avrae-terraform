@@ -90,7 +90,7 @@ module "ecs_vpc" {
 module "ecs_taine" {
   source  = "./modules/ecs-fargate-bot"
 
-  service               = "${var.service}"
+  service               = "taine"
   env                   = "${var.env}"
   group                 = "${var.group}"
   region                = "${var.region}"
