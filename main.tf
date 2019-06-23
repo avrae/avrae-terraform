@@ -8,6 +8,28 @@ terraform {
   }
 }
 
+locals {
+  common_tags = {
+    Component = "${var.service}"
+    Environment = "${var.env}"
+    Team = "${var.group}"
+  }
+}
+
+# Secrets Manager Secret - Taine Discord Token
+resource "aws_secretsmanager_secret" "taine_discord_token" {
+  name = "avrae/${var.env}/taine-discord-token"
+  description = "Discord token for Taine."
+  tags = "${local.common_tags}"
+}
+
+# Secrets Manager Secret - Taine GitHub Token
+resource "aws_secretsmanager_secret" "taine_github_token" {
+  name = "avrae/${var.env}/taine-github-token"
+  description = "GitHub token for Taine."
+  tags = "${local.common_tags}"
+}
+
 # ECR - Taine
 module "ecr_taine" {
   source  = "app.terraform.io/Fandom/ecr/aws"
@@ -81,7 +103,7 @@ module "ecs_taine" {
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   environment_variables = [
-                            {"name" = "DISCORD_TOKEN", "value" = "${var.taine_discord_token}"},
-                            {"name" = "GITHUB_TOKEN", "value" = "${var.taine_github_token}"}
+                            {"name" = "DISCORD_TOKEN", "value-from" = "${aws_secretsmanager_secret.taine_discord_token.arn}"},
+                            {"name" = "GITHUB_TOKEN", "value-from" = "${aws_secretsmanager_secret.taine_github_token.arn}"}
                           ]
 }
