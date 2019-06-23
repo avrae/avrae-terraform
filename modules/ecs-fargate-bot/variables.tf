@@ -39,6 +39,12 @@ variable "environment_variables" {
     default     = []
 }
 
+variable "secrets" {
+    description = "Secrets used locally in the task definition"
+    type        = "list"
+    default     = []
+}
+
 variable "instance_count" {
     description = "How many instance tasks to run."
     default = 1

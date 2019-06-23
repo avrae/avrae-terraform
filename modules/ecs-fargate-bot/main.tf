@@ -64,7 +64,8 @@ resource "aws_ecs_task_definition" "service_task_definition" {
           "awslogs-stream-prefix": "${var.service}-task"
         }
     },
-    "environment": ${jsonencode(var.environment_variables)}
+    "environment": ${jsonencode(var.environment_variables)},
+    "secrets": ${jsonencode(var.secrets)}
   }
 ]
 DEFINITION
