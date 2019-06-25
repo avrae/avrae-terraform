@@ -1,5 +1,5 @@
 provider "aws" {
-  region  = "${var.region}"
+  region = "${var.region}"
 }
 
 terraform {
@@ -10,30 +10,30 @@ terraform {
 
 locals {
   common_tags = {
-    Component = "${var.service}"
+    Component   = "${var.service}"
     Environment = "${var.env}"
-    Team = "${var.group}"
+    Team        = "${var.group}"
   }
 }
 
 # Secrets Manager Secret - Taine Discord Token
 resource "aws_secretsmanager_secret" "taine_discord_token" {
-  name = "avrae/${var.env}/taine-discord-token"
+  name        = "avrae/${var.env}/taine-discord-token"
   description = "Discord token for Taine."
-  tags = "${local.common_tags}"
+  tags        = "${local.common_tags}"
 }
 
 # Secrets Manager Secret - Taine GitHub Token
 resource "aws_secretsmanager_secret" "taine_github_token" {
-  name = "avrae/${var.env}/taine-github-token"
+  name        = "avrae/${var.env}/taine-github-token"
   description = "GitHub token for Taine."
-  tags = "${local.common_tags}"
+  tags        = "${local.common_tags}"
 }
 
 # ECR - Taine
 module "ecr_taine" {
-  source  = "app.terraform.io/Fandom/ecr/aws"
-  version = "1.0.0"
+  source   = "app.terraform.io/Fandom/ecr/aws"
+  version  = "1.0.0"
 
   env      = "${var.env}"
   service  = "${var.service}"
@@ -43,8 +43,8 @@ module "ecr_taine" {
 
 # ECR - Avrae Bot
 module "ecr_avrae_bot" {
-  source  = "app.terraform.io/Fandom/ecr/aws"
-  version = "1.0.0"
+  source   = "app.terraform.io/Fandom/ecr/aws"
+  version  = "1.0.0"
 
   env      = "${var.env}"
   service  = "${var.service}"
@@ -54,8 +54,8 @@ module "ecr_avrae_bot" {
 
 # ECR - Avrae Service
 module "ecr_avrae_service" {
-  source  = "app.terraform.io/Fandom/ecr/aws"
-  version = "1.0.0"
+  source   = "app.terraform.io/Fandom/ecr/aws"
+  version  = "1.0.0"
 
   env      = "${var.env}"
   service  = "${var.service}"
@@ -65,7 +65,7 @@ module "ecr_avrae_service" {
 
 # IAM Deploy User
 module "iam_deploy" {
-  source = "./modules/iam-deploy"
+  source      = "./modules/iam-deploy"
   
   env         = "${var.env}"
   service     = "${var.service}"
@@ -88,7 +88,7 @@ module "ecs_vpc" {
 
 # ECS - Taine
 module "ecs_taine" {
-  source  = "./modules/ecs-fargate-bot"
+  source                = "./modules/ecs-fargate-bot"
 
   service               = "taine"
   env                   = "${var.env}"
@@ -106,4 +106,34 @@ module "ecs_taine" {
                             {"name" = "DISCORD_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_discord_token.arn}"},
                             {"name" = "GITHUB_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_github_token.arn}"}
                           ]
+}
+
+# Avrae DNS Setup
+resource "aws_route53_zone" "service" {
+  name = "${var.service}-${var.env}.curse.us"
+  vpc {
+    vpc_id = "${module.ecs_vpc.aws_vpc_main_id}"
+  }
+}
+
+# Redis
+module "redis_avrae" {
+  source              = "app.terraform.io/Fandom/redis/aws"
+  version             = "2.0.2"
+
+  name                = "Avrae"
+  num_dbs             = "2"
+  instance_type       = "cache.m5.large"
+  common_name         = "${var.common_name}"
+  env                 = "${var.env}"
+  service             = "${var.service}"
+  group               = "${var.group}"
+  redis_whitelist_sgs = []
+  automatic_failover  = "true"
+  engine_version      = "5.0.3"
+  local_zone_id       = "${aws_route53_zone.service.name}"
+  subnet_ids          = [
+                          "${module.ecs_vpc.private_subnet_ids}"
+                        ]
+  vpc_id              = "${module.ecs_vpc.aws_vpc_main_id}"
 }

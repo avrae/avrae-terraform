@@ -13,3 +13,7 @@ output "avrae_service_ecr_repository" {
 output "deploy_iam_access_key" {
   value = "${module.iam_deploy.iam_access_key}"
 }
+
+output "avrae_redis_hostname" {
+  value = "${module.redis_avrae.hostname}"
+}

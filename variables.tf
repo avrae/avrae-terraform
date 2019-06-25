@@ -17,3 +17,7 @@ variable "group" {
 variable "account_id" {
   description = "Account ID of this account"
 }
+
+variable "common_name" {
+  description = "Used as a more readable name for the service"
+}
