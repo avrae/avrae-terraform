@@ -108,7 +108,7 @@ module "ecs_taine" {
                           ]
 }
 
-# Avrae DNS Setup
+# Avrae DNS Zone
 resource "aws_route53_zone" "service" {
   name = "${var.service}-${var.env}.curse.us"
   vpc {
@@ -133,7 +133,7 @@ module "redis_avrae" {
   engine_version               = "4.0.10"
   cluster_parameter_group_name = "default.redis4.0"
   parameter_group_name         = "default.redis4.0"
-  local_zone_id                = "${aws_route53_zone.service.name}"
+  local_zone_id                = "${aws_route53_zone.service.id}"
   subnet_ids                   = [
                                   "${module.ecs_vpc.private_subnet_ids}"
                                 ]
