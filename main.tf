@@ -118,22 +118,24 @@ resource "aws_route53_zone" "service" {
 
 # Redis
 module "redis_avrae" {
-  source              = "app.terraform.io/Fandom/redis/aws"
-  version             = "2.0.2"
+  source                       = "app.terraform.io/Fandom/redis/aws"
+  version                      = "2.0.2"
 
-  name                = "Avrae"
-  num_dbs             = "2"
-  instance_type       = "cache.m5.large"
-  common_name         = "${var.common_name}"
-  env                 = "${var.env}"
-  service             = "${var.service}"
-  group               = "${var.group}"
-  redis_whitelist_sgs = []
-  automatic_failover  = "true"
-  engine_version      = "5.0.3"
-  local_zone_id       = "${aws_route53_zone.service.name}"
-  subnet_ids          = [
-                          "${module.ecs_vpc.private_subnet_ids}"
-                        ]
-  vpc_id              = "${module.ecs_vpc.aws_vpc_main_id}"
+  name                         = "Avrae"
+  num_dbs                      = "2"
+  instance_type                = "cache.m5.large"
+  common_name                  = "${var.common_name}"
+  env                          = "${var.env}"
+  service                      = "${var.service}"
+  group                        = "${var.group}"
+  redis_whitelist_sgs          = []
+  automatic_failover           = "true"
+  engine_version               = "4.0.10"
+  cluster_parameter_group_name = "default.redis4.0"
+  parameter_group_name         = "default.redis4.0"
+  local_zone_id                = "${aws_route53_zone.service.name}"
+  subnet_ids                   = [
+                                  "${module.ecs_vpc.private_subnet_ids}"
+                                ]
+  vpc_id                       = "${module.ecs_vpc.aws_vpc_main_id}"
 }
