@@ -142,3 +142,19 @@ module "redis_avrae" {
                                 ]
   vpc_id                       = "${module.ecs_vpc.aws_vpc_main_id}"
 }
+
+# MongoDB
+module "mongodb_avrae" {
+  source = "./modules/mongodb"
+
+  service               = "${var.service}"
+  env                   = "${var.env}"
+  group                 = "${var.group}"
+  common_name           = "${var.common_name}"
+  mongodb_username      = "${var.mongodb_username}"
+  mongodb_password      = "${var.mongodb_password}"
+  vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
+  subnet_ids            = [
+                            "${module.ecs_vpc.private_subnet_ids}"
+                          ]
+}
