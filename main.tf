@@ -102,6 +102,9 @@ module "ecs_taine" {
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/taine:live"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
+  environment_variables = [
+                            {"name" = "DYNAMODB_URL", value = "https://dynamodb.us-east-1.amazonaws.com"}
+                          ]
   secrets               = [
                             {"name" = "DISCORD_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_discord_token.arn}"},
                             {"name" = "GITHUB_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_github_token.arn}"}
