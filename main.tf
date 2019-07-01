@@ -16,6 +16,12 @@ locals {
   }
 }
 
+
+data "aws_acm_certificate" "certificate" {
+  domain   = "*.dndbeyond.com"
+  statuses = ["ISSUED"]
+}
+
 # Secrets Manager Secret - Taine Discord Token
 resource "aws_secretsmanager_secret" "taine_discord_token" {
   name        = "avrae/${var.env}/taine-discord-token"
@@ -86,22 +92,48 @@ module "ecs_vpc" {
   common_name     = "Avrae"
 }
 
-# ECS - Taine
-module "ecs_taine" {
-  source                = "./modules/ecs-fargate-bot"
-
-  service               = "taine"
+# ECS Fargate - Avrae Cluster
+module "ecs_avrae" {
+  source  = "app.terraform.io/Fandom/ecs_fargate_cluster/aws"
+  version = "1.0.0"
+  alb_scheme            = "internal"
+  service               = "${var.service}"
   env                   = "${var.env}"
   group                 = "${var.group}"
+  cluster_name          = "${var.service}-${var.env}"
+  common_name           = "${var.common_name}"
+  docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/taine:live"
+  public_subnets       = ["${module.ecs_vpc.public_subnet_ids}"]
+  vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
+}
+
+# ECS Fargate - Taine - Service
+module "taine_ecs" {
+  source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
+  version = "1.0.1"
+  private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
+  public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
+  aws_lb_id             = "${module.ecs_avrae.lb_external_listener}"
+  lb_sg_id              = "${module.ecs_avrae.lb_sg_id}"
   region                = "${var.region}"
+  service               = "taine"
+  service_name          = "taine"
+  account_id            = "${var.account_id}"
+  service_port          = 80
+  instance_count        = 1
+  vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
+  cluster_id            = "${module.ecs_avrae.cluster_id}"
+  common_name           = "Taine"
+  cluster_name          = "${var.service}-${var.env}"
+  env                   = "${var.env}"
+  certificate_domain    = "*.dndbeyond.com"
+  group                 = "${var.group}"
+  docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/taine:live"
   ecs_role_policy_arns  = [
                             "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
                             "arn:aws:iam::aws:policy/CloudWatchFullAccess",
                             "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
                           ]
-  docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/taine:live"
-  private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
-  vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   environment_variables = [
                             {"name" = "DYNAMODB_URL", value = "https://dynamodb.us-east-1.amazonaws.com"}
                           ]
@@ -109,6 +141,102 @@ module "ecs_taine" {
                             {"name" = "DISCORD_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_discord_token.arn}"},
                             {"name" = "GITHUB_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_github_token.arn}"}
                           ]
+}
+
+# ECS Fargate - Avrae Service - Service
+module "avrae_service_ecs" {
+  source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
+  version = "1.0.1"
+  private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
+  public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
+  aws_lb_id             = "${module.ecs_avrae.lb_external_listener}"
+  lb_sg_id              = "${module.ecs_avrae.lb_sg_id}"
+  region                = "${var.region}"
+  service               = "avrae-service"
+  service_name          = "avrae-service"
+  account_id            = "${var.account_id}"
+  service_port          = 80
+  vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
+  cluster_id            = "${module.ecs_avrae.cluster_id}"
+  common_name           = "Avrae Service"
+  cluster_name          = "${var.service}-${var.env}"
+  env                   = "${var.env}"
+  certificate_domain    = "*.dndbeyond.com"
+  group                 = "${var.group}"
+  docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
+}
+
+# ECS Fargate - Avrae Bot - Service
+module "avrae_bot_ecs" {
+  source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
+  version = "1.0.1"
+  private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
+  public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
+  aws_lb_id             = "${module.ecs_avrae.lb_internal_listener}"
+  lb_sg_id              = "${module.ecs_avrae.lb_sg_id}"
+  region                = "${var.region}"
+  service               = "avrae-bot"
+  service_name          = "avrae-bot"
+  account_id            = "${var.account_id}"
+  service_port          = 80
+  instance_count        = 1
+  vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
+  cluster_id            = "${module.ecs_avrae.cluster_id}"
+  common_name           = "Avrae Bot"
+  cluster_name          = "${var.service}-${var.env}"
+  env                   = "${var.env}"
+  certificate_domain    = "*.dndbeyond.com"
+  group                 = "${var.group}"
+  docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
+}
+
+
+resource "aws_lb_listener" "front_end_http" {
+  load_balancer_arn = "${module.ecs_avrae.lb_external_listener}" 
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    target_group_arn = "${module.avrae_service_ecs.target_group_id}" 
+    type             = "forward"
+  }
+}
+
+resource "aws_lb_listener" "front_end_https" {
+  load_balancer_arn = "${module.ecs_avrae.lb_external_listener}"
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "${data.aws_acm_certificate.certificate.arn}"
+
+  default_action {
+    target_group_arn = "${module.avrae_service_ecs.target_group_id}"
+    type             = "forward"
+  }
+}
+
+resource "aws_lb_listener" "internal" {
+  load_balancer_arn = "${module.ecs_avrae.lb_internal_listener}" 
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    target_group_arn = "${module.avrae_bot_ecs.target_group_id}" 
+    type             = "forward"
+  }
+}
+resource "aws_lb_listener_rule" "taine_ecs" {
+  listener_arn = "${aws_lb_listener.front_end_http.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${module.taine_ecs.target_group_id}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/github/*"]
+  }
 }
 
 # Avrae DNS Zone
