@@ -111,6 +111,7 @@ module "ecs_avrae" {
 module "taine_ecs" {
   source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
   version = "1.0.0"
+  version = "1.0.1"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
   aws_lb_id             = "${module.ecs_avrae.lb_external_listener}"
@@ -120,6 +121,7 @@ module "taine_ecs" {
   service_name          = "taine"
   account_id            = "${var.account_id}"
   service_port          = 80
+  instance_count        = 1
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
   common_name           = "Taine"
@@ -145,7 +147,7 @@ module "taine_ecs" {
 # ECS Fargate - Avrae Service - Service
 module "avrae_service_ecs" {
   source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
-  version = "1.0.0"
+  version = "1.0.1"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
   aws_lb_id             = "${module.ecs_avrae.lb_external_listener}"
@@ -168,7 +170,7 @@ module "avrae_service_ecs" {
 # ECS Fargate - Avrae Bot - Service
 module "avrae_bot_ecs" {
   source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
-  version = "1.0.0"
+  version = "1.0.1"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
   aws_lb_id             = "${module.ecs_avrae.lb_internal_listener}"
@@ -178,6 +180,7 @@ module "avrae_bot_ecs" {
   service_name          = "avrae-bot"
   account_id            = "${var.account_id}"
   service_port          = 80
+  instance_count        = 1
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
   common_name           = "Avrae Bot"
