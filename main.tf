@@ -128,7 +128,8 @@ module "taine_ecs" {
   service               = "taine"
   service_name          = "taine"
   account_id            = "${var.account_id}"
-  service_port          = 80
+  service_port          = 8378
+  health_check          = "/github"
   instance_count        = 1
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
