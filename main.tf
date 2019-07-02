@@ -79,6 +79,25 @@ module "iam_deploy" {
   account_id  = "${var.account_id}"
 }
 
+# DynamoDB
+module "dynamodb_taine" {
+  source      = "./modules/dynamodb-taine"
+  
+  service     = "${var.service}"
+  env         = "${var.env}"
+  group       = "${var.group}"
+}
+
+# IAM Developer User
+module "iam_developer" {
+  source                        = "./modules/iam-developer"
+  
+  env                           = "${var.env}"
+  service                       = "${var.service}"
+  reports_dynamodb_table_arn    = "${module.dynamodb_taine.reports_dynamodb_table_arn}"
+  reportnums_dynamodb_table_arn = "${module.dynamodb_taine.reportnums_dynamodb_table_arn}"
+}
+
 # VPC
 module "ecs_vpc" {
   source          = "app.terraform.io/Fandom/ddb_ecs_vpc/aws"
@@ -110,7 +129,6 @@ module "ecs_avrae" {
 # ECS Fargate - Taine - Service
 module "taine_ecs" {
   source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
-  version = "1.0.0"
   version = "1.0.1"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
