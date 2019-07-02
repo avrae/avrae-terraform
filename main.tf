@@ -88,16 +88,6 @@ module "dynamodb_taine" {
   group       = "${var.group}"
 }
 
-# IAM Developer User
-module "iam_developer" {
-  source                        = "./modules/iam-developer"
-  
-  env                           = "${var.env}"
-  service                       = "${var.service}"
-  reports_dynamodb_table_arn    = "${module.dynamodb_taine.reports_dynamodb_table_arn}"
-  reportnums_dynamodb_table_arn = "${module.dynamodb_taine.reportnums_dynamodb_table_arn}"
-}
-
 # VPC
 module "ecs_vpc" {
   source          = "app.terraform.io/Fandom/ddb_ecs_vpc/aws"
@@ -152,7 +142,8 @@ module "taine_ecs" {
   ecs_role_policy_arns  = [
                             "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
                             "arn:aws:iam::aws:policy/CloudWatchFullAccess",
-                            "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+                            "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+                            "${module.dynamodb_taine.dynamodb_iam_policy_arn}"
                           ]
   environment_variables = [
                             {"name" = "DYNAMODB_URL", value = "https://dynamodb.us-east-1.amazonaws.com"}
