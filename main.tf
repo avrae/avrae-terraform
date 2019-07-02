@@ -245,7 +245,7 @@ resource "aws_lb_listener_rule" "taine_ecs" {
 
   condition {
     field  = "path-pattern"
-    values = ["/github/*"]
+    values = ["/github*"]
   }
 }
 
