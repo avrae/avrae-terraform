@@ -151,7 +151,8 @@ module "taine_ecs" {
   ecs_role_policy_arns  = [
                             "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
                             "arn:aws:iam::aws:policy/CloudWatchFullAccess",
-                            "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+                            "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+                            "${module.dynamodb_taine.dynamodb_iam_policy_arn}"
                           ]
   environment_variables = [
                             {"name" = "DYNAMODB_URL", value = "https://dynamodb.us-east-1.amazonaws.com"}
