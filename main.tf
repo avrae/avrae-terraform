@@ -88,16 +88,6 @@ module "dynamodb_taine" {
   group       = "${var.group}"
 }
 
-# IAM Developer User
-module "iam_developer" {
-  source                        = "./modules/iam-developer"
-  
-  env                           = "${var.env}"
-  service                       = "${var.service}"
-  reports_dynamodb_table_arn    = "${module.dynamodb_taine.reports_dynamodb_table_arn}"
-  reportnums_dynamodb_table_arn = "${module.dynamodb_taine.reportnums_dynamodb_table_arn}"
-}
-
 # VPC
 module "ecs_vpc" {
   source          = "app.terraform.io/Fandom/ddb_ecs_vpc/aws"
