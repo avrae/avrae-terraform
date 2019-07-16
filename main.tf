@@ -283,9 +283,32 @@ module "redis_avrae" {
 }
 
 # MongoDB
+
+
+resource "aws_security_group" "office_access" {
+  name        = "eb-ec2-${var.env}-${var.service}"
+  description = "Security group for access from the office"
+  vpc_id               = "${var.vpc_id}"
+  tags {
+    Name = "${var.env}-${var.service} Office Access"
+    env = "${var.env}"
+    domain = "${var.domain}"
+  }
+}
+
+resource "aws_security_group_rule" "huntsville" {
+  count           = "${length(var.whitelist_cidrs) == 0 ? 0 : 1}"
+  type            = "ingress"
+  from_port       = 0
+  to_port         = 0
+  protocol        = "-1"
+  cidr_blocks     = ["${var.whitelist_cidrs}"]
+  security_group_id = "${aws_security_group.office_access.id}"
+}
+
 module "mongodb_avrae" {
   source = "./modules/mongodb"
-
+  mongodb_whitelist_sgs = "${aws_security_group.office_access.id}"
   service               = "${var.service}"
   env                   = "${var.env}"
   group                 = "${var.group}"
