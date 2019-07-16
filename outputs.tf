@@ -19,5 +19,5 @@ output "avrae_redis_hostname" {
 }
 
 output "ec2_mdb_access_ip" {
-  value = "${aws_instance.dev_mdb_access.public_ip}"
+  value = "${aws_instance.dev_mdb_access.public_dns}"
 }
