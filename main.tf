@@ -171,7 +171,7 @@ module "taine_ecs" {
                           ]
   secrets               = [
                             {"name" = "DISCORD_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_discord_token.arn}"},
-                            {"name" = "GITHUB_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_github_token.arn}"}
+                            {"name" = "GITHUB_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_github_token.arn}"},
                             {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.taine_sentry_dsn.arn}"}
                           ]
 }
