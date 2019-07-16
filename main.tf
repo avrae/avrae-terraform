@@ -307,7 +307,7 @@ resource "aws_security_group_rule" "huntsville" {
 
 module "mongodb_avrae" {
   source = "./modules/mongodb"
-  mongodb_whitelist_sgs = "${aws_security_group.office_access.id}"
+  mongodb_whitelist_sgs = ["${aws_security_group.office_access.id}"]
   service               = "${var.service}"
   env                   = "${var.env}"
   group                 = "${var.group}"
