@@ -37,3 +37,10 @@ resource "aws_docdb_cluster" "default" {
   db_subnet_group_name   = "${aws_docdb_subnet_group.default.name}"
   tags                   = "${local.common_tags}"
 }
+
+resource "aws_docdb_cluster_instance" "cluster_instances" {
+  count              = 2
+  identifier         = "${var.service}-${var.env}-${count.index}"
+  cluster_identifier = "${aws_docdb_cluster.default.id}"
+  instance_class     = "db.r4.large"
+}
