@@ -34,3 +34,7 @@ variable "whitelist_cidrs" {
   type        = "list"
   description = "IP CIDRs to whitelist globally"
 }
+
+variable "dev_access_pubkey" {
+  description = "SSH public key to access EC2 instance to access mongo"
+}
