@@ -22,6 +22,20 @@ data "aws_acm_certificate" "certificate" {
   statuses = ["ISSUED"]
 }
 
+# Secrets Manager Secret - Avrae Bot Sentry DSN
+resource "aws_secretsmanager_secret" "avrae_bot_sentry_dsn" {
+  name        = "avrae/${var.env}/avrae-bot-sentry-dsn"
+  description = "Sentry DSN for Avrae Bot."
+  tags        = "${local.common_tags}"
+}
+
+# Secrets Manager Secret - Avrae Service Sentry DSN
+resource "aws_secretsmanager_secret" "avrae_service_sentry_dsn" {
+  name        = "avrae/${var.env}/avrae-service-sentry-dsn"
+  description = "Sentry DSN for Avrae Service."
+  tags        = "${local.common_tags}"
+}
+
 # Secrets Manager Secret - Taine Discord Token
 resource "aws_secretsmanager_secret" "taine_discord_token" {
   name        = "avrae/${var.env}/taine-discord-token"
@@ -33,6 +47,13 @@ resource "aws_secretsmanager_secret" "taine_discord_token" {
 resource "aws_secretsmanager_secret" "taine_github_token" {
   name        = "avrae/${var.env}/taine-github-token"
   description = "GitHub token for Taine."
+  tags        = "${local.common_tags}"
+}
+
+# Secrets Manager Secret - Taine Sentry DSN
+resource "aws_secretsmanager_secret" "taine_sentry_dsn" {
+  name        = "avrae/${var.env}/taine-sentry-dsn"
+  description = "Sentry DSN for Taine."
   tags        = "${local.common_tags}"
 }
 
@@ -150,7 +171,8 @@ module "taine_ecs" {
                           ]
   secrets               = [
                             {"name" = "DISCORD_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_discord_token.arn}"},
-                            {"name" = "GITHUB_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_github_token.arn}"}
+                            {"name" = "GITHUB_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.taine_github_token.arn}"},
+                            {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.taine_sentry_dsn.arn}"}
                           ]
 }
 
@@ -175,6 +197,12 @@ module "avrae_service_ecs" {
   certificate_domain    = "*.dndbeyond.com"
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
+  ecs_role_policy_arns  = [
+                            "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+                          ]
+  secrets               = [
+                            {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.avrae_service_sentry_dsn.arn}"}
+                          ]
 }
 
 # ECS Fargate - Avrae Bot - Service
@@ -199,6 +227,12 @@ module "avrae_bot_ecs" {
   certificate_domain    = "*.dndbeyond.com"
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
+  ecs_role_policy_arns  = [
+                            "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+                          ]
+  secrets               = [
+                            {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_sentry_dsn.arn}"}
+                          ]
 }
 
 
