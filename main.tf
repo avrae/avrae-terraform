@@ -332,5 +332,9 @@ resource "aws_instance" "dev_mdb_access" {
   vpc_security_group_ids      = [ "${aws_security_group.office_access.id}" ]
   key_name                    = "${aws_key_pair.dev_access.key_name}"
 
-  tags = "${local.common_tags}"
+  tags = "${merge(local.common_tags,
+            map(
+                "Name", "dev-access-${var.service}"
+            )
+          )}"
 }
