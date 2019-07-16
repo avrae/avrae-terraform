@@ -77,7 +77,9 @@ resource "aws_iam_policy" "dynamo_iam_policy" {
             "Action": "dynamodb:*",
             "Resource": [
                 "${aws_dynamodb_table.reports_dynamodb_table.arn}",
-                "${aws_dynamodb_table.reportnums_dynamodb_table.arn}"
+                "${aws_dynamodb_table.reports_dynamodb_table.arn}/index/*",
+                "${aws_dynamodb_table.reportnums_dynamodb_table.arn}",
+                "${aws_dynamodb_table.reportnums_dynamodb_table.arn}/index/*"
             ]
         }
     ]
