@@ -29,3 +29,8 @@ variable "mongodb_username" {
 variable "mongodb_password" {
   description = "MongoDB password"
 }
+
+variable "whitelist_cidrs" {
+  type        = "list"
+  description = "IP CIDRs to whitelist globally"
+}

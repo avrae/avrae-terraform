@@ -288,11 +288,10 @@ module "redis_avrae" {
 resource "aws_security_group" "office_access" {
   name        = "eb-ec2-${var.env}-${var.service}"
   description = "Security group for access from the office"
-  vpc_id               = "${var.vpc_id}"
+  vpc_id               = "${module.ecs_vpc.aws_vpc_main_id}"
   tags {
     Name = "${var.env}-${var.service} Office Access"
     env = "${var.env}"
-    domain = "${var.domain}"
   }
 }
 
