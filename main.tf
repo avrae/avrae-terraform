@@ -325,10 +325,12 @@ resource "aws_key_pair" "dev_access" {
 }
 
 resource "aws_instance" "dev_mdb_access" {
-  ami                     = "ami-0b898040803850657"  # amazon linux 2
-  instance_type           = "t2.micro"
-  vpc_security_group_ids  = [ "${aws_security_group.office_access.id}" ]
-  key_name                = "${aws_key_pair.dev_access.key_name}"
+  ami                         = "ami-0b898040803850657"  # amazon linux 2
+  instance_type               = "t2.micro"
+  subnet_id                   = "${module.ecs_vpc.private_subnet_ids[0]}"
+  associate_public_ip_address = true
+  vpc_security_group_ids      = [ "${aws_security_group.office_access.id}" ]
+  key_name                    = "${aws_key_pair.dev_access.key_name}"
 
   tags = "${local.common_tags}"
 }
