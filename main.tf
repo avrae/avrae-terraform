@@ -283,8 +283,22 @@ module "redis_avrae" {
 }
 
 # MongoDB
+module "mongodb_avrae" {
+  source = "./modules/mongodb"
+  mongodb_whitelist_sgs = "${aws_instance.dev_mdb_access.vpc_security_group_ids}" # ["${aws_security_group.office_access.id}"]
+  service               = "${var.service}"
+  env                   = "${var.env}"
+  group                 = "${var.group}"
+  common_name           = "${var.common_name}"
+  mongodb_username      = "${var.mongodb_username}"
+  mongodb_password      = "${var.mongodb_password}"
+  vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
+  subnet_ids            = [
+                            "${module.ecs_vpc.private_subnet_ids}"
+                          ]
+}
 
-
+# SSH access to mongoDB
 resource "aws_security_group" "office_access" {
   name        = "office-access${var.env}-${var.service}"
   description = "Security group for access from the office"
@@ -296,26 +310,25 @@ resource "aws_security_group" "office_access" {
 }
 
 resource "aws_security_group_rule" "huntsville" {
-  count           = "${length(var.whitelist_cidrs) == 0 ? 0 : 1}"
-  type            = "ingress"
-  from_port       = 0
-  to_port         = 0
-  protocol        = "-1"
-  cidr_blocks     = ["${var.whitelist_cidrs}"]
+  count             = "${length(var.whitelist_cidrs) == 0 ? 0 : 1}"
+  type              = "ingress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["${var.whitelist_cidrs}"]
   security_group_id = "${aws_security_group.office_access.id}"
 }
 
-module "mongodb_avrae" {
-  source = "./modules/mongodb"
-  mongodb_whitelist_sgs = ["${aws_security_group.office_access.id}"]
-  service               = "${var.service}"
-  env                   = "${var.env}"
-  group                 = "${var.group}"
-  common_name           = "${var.common_name}"
-  mongodb_username      = "${var.mongodb_username}"
-  mongodb_password      = "${var.mongodb_password}"
-  vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
-  subnet_ids            = [
-                            "${module.ecs_vpc.private_subnet_ids}"
-                          ]
+resource "aws_key_pair" "dev_access" {
+  key_name   = "avrae-dev-access"
+  public_key = "${var.dev_access_pubkey}"
+}
+
+resource "aws_instance" "dev_mdb_access" {
+  ami                     = "ami-0b898040803850657"  # amazon linux 2
+  instance_type           = "t2.micro"
+  vpc_security_group_ids  = [ "${aws_security_group.office_access.id}" ]
+  key_name                = "${aws_key_pair.dev_access.key_name}"
+
+  tags = "${local.common_tags}"
 }
