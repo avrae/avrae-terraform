@@ -119,7 +119,7 @@ module "ecs_avrae" {
 # ECS Fargate - Taine - Service
 module "taine_ecs" {
   source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
-  version = "1.0.1"
+  version = "1.2.0"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
   aws_lb_id             = "${module.ecs_avrae.lb_external_listener}"
@@ -131,6 +131,12 @@ module "taine_ecs" {
   service_port          = 8378
   health_check          = "/github"
   instance_count        = 1
+
+  # restart container instantly on deploy
+  deployment_minimum_healthy_percent  = 0
+  deployment_maximum_percent          = 100
+  lb_deregistration_delay             = 0
+
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
   common_name           = "Taine"
