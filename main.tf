@@ -119,14 +119,13 @@ module "dynamodb_taine" {
 # VPC
 module "ecs_vpc" {
   source          = "app.terraform.io/Fandom/ddb_ecs_vpc/aws"
-  version         = "2.0.0"
+  version         = "5.0.0"
 
   env             = "${var.env}"
   service         = "${var.service}"
   region          = "${var.region}"
-  vpc_env         = "production"
-  network_range   = "10.124.15.0/24"
-  common_name     = "Avrae"
+  network_range   = "${var.network_range}"
+  common_name     = "${var.common_name}"
 }
 
 # ECS Fargate - Avrae Cluster
