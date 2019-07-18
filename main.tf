@@ -206,6 +206,10 @@ module "avrae_service_ecs" {
   ecs_role_policy_arns  = [
                             "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
                           ]
+  environment_variables = [
+                            {"name" = "AVRAE_MONGO_URL", value = "${module.mongodb_avrae.hostname}"},
+                            {"name" = "AVRAE_REDIS_URL", value = "${module.redis_avrae.hostname}"}
+                          ]
   secrets               = [
                             {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.avrae_service_sentry_dsn.arn}"}
                           ]
@@ -235,6 +239,10 @@ module "avrae_bot_ecs" {
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
   ecs_role_policy_arns  = [
                             "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+                          ]
+  environment_variables = [
+                            {"name" = "MONGO_URL", value = "${module.mongodb_avrae.hostname}"},
+                            {"name" = "REDIS_URL", value = "${module.redis_avrae.hostname}"}
                           ]
   secrets               = [
                             {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_sentry_dsn.arn}"}
