@@ -131,7 +131,7 @@ module "ecs_vpc" {
 # ECS Fargate - Avrae Cluster
 module "ecs_avrae" {
   source  = "app.terraform.io/Fandom/ecs_fargate_cluster/aws"
-  version = "1.0.0"
+  version = "1.1.0"
   alb_scheme            = "internal"
   service               = "${var.service}"
   env                   = "${var.env}"
