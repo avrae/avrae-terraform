@@ -211,7 +211,9 @@ module "avrae_service_ecs" {
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
   ecs_role_policy_arns  = [
-                            "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+                            "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
+                            "arn:aws:iam::aws:policy/CloudWatchFullAccess",
+                            "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
                           ]
   environment_variables = [
                             {"name" = "AVRAE_REDIS_URL", value = "${module.redis_avrae.hostname}"}
@@ -245,7 +247,9 @@ module "avrae_bot_ecs" {
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
   ecs_role_policy_arns  = [
-                            "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+                            "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
+                            "arn:aws:iam::aws:policy/CloudWatchFullAccess",
+                            "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
                           ]
   environment_variables = [
                             {"name" = "REDIS_URL", value = "${module.redis_avrae.hostname}"}
