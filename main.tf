@@ -358,11 +358,11 @@ module "mongodb_avrae" {
 
 # SSH access to mongoDB
 resource "aws_security_group" "office_access" {
-  name        = "office-access${var.env}-${var.service}"
+  name        = "${var-service}-${var.env}-office-access"
   description = "Security group for access from the office"
   vpc_id               = "${module.ecs_vpc.aws_vpc_main_id}"
   tags {
-    Name = "${var.env}-${var.service} Office Access"
+    Name = "${var.service}-${var.env} Office Access"
     env = "${var.env}"
   }
 }
