@@ -358,12 +358,12 @@ module "mongodb_avrae" {
 
 # SSH access to mongoDB
 resource "aws_security_group" "office_access" {
-  name        = "${var-service}-${var.env}-office-access"
+  name        = "${var.service}-${var.env}-office-access"
   description = "Security group for access from the office"
-  vpc_id               = "${module.ecs_vpc.aws_vpc_main_id}"
+  vpc_id      = "${module.ecs_vpc.aws_vpc_main_id}"
   tags {
     Name = "${var.service}-${var.env} Office Access"
-    env = "${var.env}"
+    env  = "${var.env}"
   }
 }
 
@@ -379,7 +379,7 @@ resource "aws_security_group_rule" "huntsville" {
 
 resource "aws_security_group_rule" "egress" {
   type              = "egress"
-  protocol         = "-1"
+  protocol          = "-1"
   from_port         = 0
   to_port           = 0
   cidr_blocks       = ["0.0.0.0/0"]
