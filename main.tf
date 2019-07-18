@@ -202,6 +202,7 @@ module "avrae_service_ecs" {
   service_name          = "avrae-service"
   account_id            = "${var.account_id}"
   service_port          = 80
+  instance_count        = 1
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
   common_name           = "Avrae Service"
@@ -237,7 +238,6 @@ module "avrae_bot_ecs" {
   service_name          = "avrae-bot"
   account_id            = "${var.account_id}"
   service_port          = 80
-  instance_count        = 1
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
   common_name           = "Avrae Bot"
