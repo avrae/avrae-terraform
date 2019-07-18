@@ -18,7 +18,7 @@ locals {
 
 
 data "aws_acm_certificate" "certificate" {
-  domain   = "*.dndbeyond.com"
+  domain   = "${var.cert_domain}"
   statuses = ["ISSUED"]
 }
 
@@ -163,7 +163,7 @@ module "taine_ecs" {
   common_name           = "Taine"
   cluster_name          = "${var.service}-${var.env}"
   env                   = "${var.env}"
-  certificate_domain    = "${data.aws_acm_certificate.certificate.domain}"
+  certificate_domain    = "${var.cert_domain}"
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/taine:live"
   ecs_role_policy_arns  = [
@@ -200,7 +200,7 @@ module "avrae_service_ecs" {
   common_name           = "Avrae Service"
   cluster_name          = "${var.service}-${var.env}"
   env                   = "${var.env}"
-  certificate_domain    = "${data.aws_acm_certificate.certificate.domain}"
+  certificate_domain    = "${var.cert_domain}"
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
   ecs_role_policy_arns  = [
@@ -230,7 +230,7 @@ module "avrae_bot_ecs" {
   common_name           = "Avrae Bot"
   cluster_name          = "${var.service}-${var.env}"
   env                   = "${var.env}"
-  certificate_domain    = "${data.aws_acm_certificate.certificate.domain}"
+  certificate_domain    = "${var.cert_domain}"
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
   ecs_role_policy_arns  = [
