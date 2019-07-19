@@ -18,7 +18,7 @@ locals {
 
 
 data "aws_acm_certificate" "certificate" {
-  domain   = "*.dndbeyond.com"
+  domain   = "${var.cert_domain}"
   statuses = ["ISSUED"]
 }
 
@@ -126,20 +126,19 @@ module "dynamodb_taine" {
 # VPC
 module "ecs_vpc" {
   source          = "app.terraform.io/Fandom/ddb_ecs_vpc/aws"
-  version         = "2.0.0"
+  version         = "5.0.0"
 
   env             = "${var.env}"
   service         = "${var.service}"
   region          = "${var.region}"
-  vpc_env         = "production"
-  network_range   = "10.124.15.0/24"
-  common_name     = "Avrae"
+  network_range   = "${var.network_range}"
+  common_name     = "${var.common_name}"
 }
 
 # ECS Fargate - Avrae Cluster
 module "ecs_avrae" {
   source  = "app.terraform.io/Fandom/ecs_fargate_cluster/aws"
-  version = "1.0.0"
+  version = "1.1.2"
   alb_scheme            = "internal"
   service               = "${var.service}"
   env                   = "${var.env}"
@@ -177,7 +176,7 @@ module "taine_ecs" {
   common_name           = "Taine"
   cluster_name          = "${var.service}-${var.env}"
   env                   = "${var.env}"
-  certificate_domain    = "*.dndbeyond.com"
+  certificate_domain    = "${var.cert_domain}"
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/taine:live"
   ecs_role_policy_arns  = [
@@ -209,12 +208,13 @@ module "avrae_service_ecs" {
   service_name          = "avrae-service"
   account_id            = "${var.account_id}"
   service_port          = 8000
+  instance_count        = 1
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
   common_name           = "Avrae Service"
   cluster_name          = "${var.service}-${var.env}"
   env                   = "${var.env}"
-  certificate_domain    = "*.dndbeyond.com"
+  certificate_domain    = "${var.cert_domain}"
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
   ecs_role_policy_arns  = [
@@ -244,13 +244,12 @@ module "avrae_bot_ecs" {
   service_name          = "avrae-bot"
   account_id            = "${var.account_id}"
   service_port          = 80
-  instance_count        = 1
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
   common_name           = "Avrae Bot"
   cluster_name          = "${var.service}-${var.env}"
   env                   = "${var.env}"
-  certificate_domain    = "*.dndbeyond.com"
+  certificate_domain    = "${var.cert_domain}"
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-bot:live"
   ecs_role_policy_arns  = [
@@ -367,12 +366,12 @@ module "mongodb_avrae" {
 
 # SSH access to mongoDB
 resource "aws_security_group" "office_access" {
-  name        = "office-access${var.env}-${var.service}"
+  name        = "${var.service}-${var.env}-office-access"
   description = "Security group for access from the office"
-  vpc_id               = "${module.ecs_vpc.aws_vpc_main_id}"
+  vpc_id      = "${module.ecs_vpc.aws_vpc_main_id}"
   tags {
-    Name = "${var.env}-${var.service} Office Access"
-    env = "${var.env}"
+    Name = "${var.service}-${var.env} Office Access"
+    env  = "${var.env}"
   }
 }
 
@@ -383,6 +382,15 @@ resource "aws_security_group_rule" "huntsville" {
   to_port           = 0
   protocol          = "-1"
   cidr_blocks       = ["${var.whitelist_cidrs}"]
+  security_group_id = "${aws_security_group.office_access.id}"
+}
+
+resource "aws_security_group_rule" "egress" {
+  type              = "egress"
+  protocol          = "-1"
+  from_port         = 0
+  to_port           = 0
+  cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = "${aws_security_group.office_access.id}"
 }
 

@@ -38,3 +38,12 @@ variable "whitelist_cidrs" {
 variable "dev_access_pubkey" {
   description = "SSH public key to access EC2 instance to access mongo"
 }
+
+variable "cert_domain" {
+  description = "Used for defining the domain used for the certificate which is used on the load balancer."
+  default = "*.dndbeyond.com"
+}
+
+variable "network_range" {
+  description = "Used to specify the network range we use, ie 192.168.0.0/16"
+}
