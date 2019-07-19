@@ -64,6 +64,13 @@ resource "aws_secretsmanager_secret" "mongo_url" {
   tags        = "${local.common_tags}"
 }
 
+# Secrets Manager Secret - Mongo URL
+resource "aws_secretsmanager_secret" "avrae_bot_discord_token" {
+  name        = "avrae/${var.env}/avrae-bot-discord-token"
+  description = "Discord token for the Avrae Bot."
+  tags        = "${local.common_tags}"
+}
+
 # ECR - Taine
 module "ecr_taine" {
   source   = "app.terraform.io/Fandom/ecr/aws"
@@ -256,7 +263,8 @@ module "avrae_bot_ecs" {
                           ]
   secrets               = [
                             {"name" = "MONGO_URL", valueFrom = "${aws_secretsmanager_secret.mongo_url.arn}"},
-                            {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_sentry_dsn.arn}"}
+                            {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_sentry_dsn.arn}"},
+                            {"name" = "DISCORD_BOT_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_discord_token.arn}"}
                           ]
 }
 
