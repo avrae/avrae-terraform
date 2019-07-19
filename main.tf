@@ -64,6 +64,13 @@ resource "aws_secretsmanager_secret" "mongo_url" {
   tags        = "${local.common_tags}"
 }
 
+# Secrets Manager Secret - Mongo URL
+resource "aws_secretsmanager_secret" "avrae_bot_discord_token" {
+  name        = "avrae/${var.env}/avrae-bot-discord-token"
+  description = "Discord token for the Avrae Bot."
+  tags        = "${local.common_tags}"
+}
+
 # ECR - Taine
 module "ecr_taine" {
   source   = "app.terraform.io/Fandom/ecr/aws"
@@ -200,7 +207,7 @@ module "avrae_service_ecs" {
   service               = "avrae-service"
   service_name          = "avrae-service"
   account_id            = "${var.account_id}"
-  service_port          = 80
+  service_port          = 8000
   instance_count        = 1
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
@@ -216,10 +223,10 @@ module "avrae_service_ecs" {
                             "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
                           ]
   environment_variables = [
-                            {"name" = "AVRAE_REDIS_URL", value = "${module.redis_avrae.hostname}"}
+                            {"name" = "REDIS_URL", value = "${module.redis_avrae.hostname}"}
                           ]
   secrets               = [
-                            {"name" = "AVRAE_MONGO_URL", valueFrom = "${aws_secretsmanager_secret.mongo_url.arn}"},
+                            {"name" = "MONGO_URL", valueFrom = "${aws_secretsmanager_secret.mongo_url.arn}"},
                             {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.avrae_service_sentry_dsn.arn}"}
                           ]
 }
@@ -244,7 +251,7 @@ module "avrae_bot_ecs" {
   env                   = "${var.env}"
   certificate_domain    = "${var.cert_domain}"
   group                 = "${var.group}"
-  docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-service:live"
+  docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-bot:live"
   ecs_role_policy_arns  = [
                             "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
                             "arn:aws:iam::aws:policy/CloudWatchFullAccess",
@@ -255,7 +262,8 @@ module "avrae_bot_ecs" {
                           ]
   secrets               = [
                             {"name" = "MONGO_URL", valueFrom = "${aws_secretsmanager_secret.mongo_url.arn}"},
-                            {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_sentry_dsn.arn}"}
+                            {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_sentry_dsn.arn}"},
+                            {"name" = "DISCORD_BOT_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_discord_token.arn}"}
                           ]
 }
 
