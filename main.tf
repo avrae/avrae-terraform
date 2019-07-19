@@ -245,7 +245,7 @@ module "avrae_bot_ecs" {
   env                   = "${var.env}"
   certificate_domain    = "*.dndbeyond.com"
   group                 = "${var.group}"
-  docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae:live"
+  docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-bot:live"
   ecs_role_policy_arns  = [
                             "arn:aws:iam::aws:policy/SecretsManagerReadWrite",
                             "arn:aws:iam::aws:policy/CloudWatchFullAccess",
