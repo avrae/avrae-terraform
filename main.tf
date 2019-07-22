@@ -92,6 +92,13 @@ resource "aws_secretsmanager_secret" "avrae_bot_dbl_token" {
   tags        = "${local.common_tags}"
 }
 
+# Secrets Manager Secret - Avrae Google API Service File
+resource "aws_secretsmanager_secret" "avrae_bot_google_service" {
+  name        = "avrae/${var.env}/avrae-bot-google-service"
+  description = "Google Service Account for the Avrae Bot."
+  tags        = "${local.common_tags}"
+}
+
 # ECR - Taine
 module "ecr_taine" {
   source   = "app.terraform.io/Fandom/ecr/aws"
@@ -291,6 +298,7 @@ module "avrae_bot_ecs" {
                             {"name" = "DICECLOUD_PASS", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_dicecloud_pass.arn}"},
                             {"name" = "DICECLOUD_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_dicecloud_token.arn}"},
                             {"name" = "DBL_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_dbl_token.arn}"},
+                            {"name" = "GOOGLE_SERVICE_ACCOUNT", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_google_service.arn}"},
                           ]
 
   # restart container instantly on deploy
