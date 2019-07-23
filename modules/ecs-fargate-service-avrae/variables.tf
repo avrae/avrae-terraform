@@ -22,11 +22,6 @@ variable "fargate_memory" {
   default = "1024"
 }
 
-variable "service_port" {
-  description = "Port serving traffic for the service."
-  default = 8081
-}
-
 variable "instance_count" {
   description = "How many instance tasks to run."
   default = 1
@@ -52,11 +47,6 @@ variable "container_name" {
   default = "default-service-container"
 }
 
-variable "health_check" {
-  description = "Used to verify that the endpoint is healthy"
-  default = "/"
-}
-
 variable "vpc_id" {
   description = "default VPC from DDB"
 }
@@ -80,39 +70,9 @@ variable "ecs_role_policy_arns" {
     "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"]
 }
 
-variable "certificate_domain" {
-  description = "Used to name the certificate you'd like to use with the service, ie *.dndbeyond.com"
-}
-
 variable "environment_variables" {
   description = "Environment variables used locally in the task definition"
   default = []
-}
-
-
-variable "alb_scheme" {
-  description = "Switch ALB between internal or internet-facing"
-  default = "internet-facing"
-}
-
-variable "scale_target_value" {
-  description = "Target load for scaling, currently using metric ECSServiceAverageCPUUtilization"
-  default = 25
-}
-
-variable "scale_in_cooldown" {
-  description = "The amount of time, in seconds, after a scale in activity completes before another scale in activity can start."
-  default = 60
-}
-
-variable "scale_out_cooldown" {
-  description = "The amount of time, in seconds, after a scale out activity completes before another scale out activity can start."
-  default = 180
-}
-
-variable "scale_metric" {
-  description = "Metric to use for autoscaling, default is CPU"
-  default = "ECSServiceAverageCPUUtilization"
 }
 
 variable "group" {
@@ -126,19 +86,6 @@ variable "secrets" {
 
 variable "cluster_id" {
   description = "ECS Cluster ID"
-}
-
-variable "aws_lb_id" {
-
-}
-
-variable "lb_sg_id" {
-
-}
-
-variable "lb_deregistration_delay" {
-  description = "The time to wait for in-flight requests to complete while deregistering a target. During this time, the state of the target is draining. [0..3600]"
-  default = 300
 }
 
 variable "deployment_minimum_healthy_percent" {
