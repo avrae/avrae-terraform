@@ -260,23 +260,19 @@ module "avrae_service_ecs" {
 
 # ECS Fargate - Avrae Bot - Service
 module "avrae_bot_ecs" {
-  source  = "./modules/ecs-fargate"
+  source  = "./modules/ecs-fargate-service-avrae"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
-  aws_lb_id             = "${module.ecs_avrae.lb_internal_listener}"
-  lb_sg_id              = "${module.ecs_avrae.lb_sg_id}"
   region                = "${var.region}"
   service               = "avrae-bot"
   service_name          = "avrae-bot"
   account_id            = "${var.account_id}"
-  service_port          = 80
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
 
   common_name           = "Avrae Bot"
   cluster_name          = "${var.service}-${var.env}"
   env                   = "${var.env}"
-  certificate_domain    = "${var.cert_domain}"
   group                 = "${var.group}"
   docker_image          = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-bot:live"
   ecs_role_policy_arns  = [
@@ -302,7 +298,6 @@ module "avrae_bot_ecs" {
   # restart container instantly on deploy
   deployment_minimum_healthy_percent  = 0
   deployment_maximum_percent          = 100
-  lb_deregistration_delay             = 0
   instance_count                      = 1
   max_instance_count                  = 1
 
@@ -311,7 +306,7 @@ module "avrae_bot_ecs" {
   fargate_memory = 8192
 }
 
-
+# listeners
 resource "aws_lb_listener" "front_end_http" {
   load_balancer_arn = "${module.ecs_avrae.lb_external_listener}" 
   port              = "80"
@@ -336,16 +331,6 @@ resource "aws_lb_listener" "front_end_https" {
   }
 }
 
-resource "aws_lb_listener" "internal" {
-  load_balancer_arn = "${module.ecs_avrae.lb_internal_listener}" 
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action {
-    target_group_arn = "${module.avrae_bot_ecs.target_group_id}" 
-    type             = "forward"
-  }
-}
 resource "aws_lb_listener_rule" "taine_ecs" {
   listener_arn = "${aws_lb_listener.front_end_http.arn}"
 
