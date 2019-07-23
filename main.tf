@@ -285,7 +285,7 @@ module "avrae_bot_ecs" {
                             "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
                           ]
   environment_variables = [
-                            {"name" = "REDIS_URL", value = "${module.redis_avrae.hostname}"},
+                            {"name" = "REDIS_URL", value = "redis://${module.redis_avrae.hostname}"},
                             {"name" = "DISCORD_OWNER_USER_ID", value = "${var.discord_owner_id}"},
                             {"name" = "DICECLOUD_USER", value = "${var.dicecloud_username}"},
                           ]
@@ -380,6 +380,7 @@ module "redis_avrae" {
       "${module.avrae_bot_ecs.security_group_id}",
       "${module.avrae_service_ecs.security_group_id}",
     ]
+  num_redis_whitelist_sgs      = 2
   automatic_failover           = "true"
   engine_version               = "4.0.10"
   cluster_parameter_group_name = "default.redis4.0"
