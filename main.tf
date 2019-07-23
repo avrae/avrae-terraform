@@ -366,7 +366,7 @@ module "redis_avrae" {
   service                      = "${var.service}"
   group                        = "${var.group}"
   redis_whitelist_sgs          = [
-      #"${module.avrae_bot_ecs.security_group_id}",
+      "${module.avrae_bot_ecs.security_group_id}",
       "${module.avrae_service_ecs.security_group_id}",
     ]
   num_redis_whitelist_sgs      = 2
@@ -387,10 +387,10 @@ module "mongodb_avrae" {
   mongodb_whitelist_sgs = "${concat(
     aws_instance.dev_mdb_access.vpc_security_group_ids,
     list(
-
+      module.avrae_bot_ecs.security_group_id,
       module.avrae_service_ecs.security_group_id,
     )
-  )}" # module.avrae_bot_ecs.security_group_id,
+  )}"
 
 
   service               = "${var.service}"
