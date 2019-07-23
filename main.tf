@@ -396,10 +396,10 @@ module "mongodb_avrae" {
   source = "./modules/mongodb"
   mongodb_whitelist_sgs = "${concat(
     aws_instance.dev_mdb_access.vpc_security_group_ids,
-    [
+    list(
       module.avrae_bot_ecs.security_group_id,
       module.avrae_service_ecs.security_group_id,
-    ]
+    )
   )}"
 
 
