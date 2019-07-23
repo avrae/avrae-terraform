@@ -64,10 +64,38 @@ resource "aws_secretsmanager_secret" "mongo_url" {
   tags        = "${local.common_tags}"
 }
 
-# Secrets Manager Secret - Mongo URL
+# Secrets Manager Secret - Avrae Discord Token
 resource "aws_secretsmanager_secret" "avrae_bot_discord_token" {
   name        = "avrae/${var.env}/avrae-bot-discord-token"
   description = "Discord token for the Avrae Bot."
+  tags        = "${local.common_tags}"
+}
+
+# Secrets Manager Secret - Avrae Dicecloud Password
+resource "aws_secretsmanager_secret" "avrae_bot_dicecloud_pass" {
+  name        = "avrae/${var.env}/avrae-bot-dicecloud-pass"
+  description = "Dicecloud password for the Avrae Bot."
+  tags        = "${local.common_tags}"
+}
+
+# Secrets Manager Secret - Avrae Dicecloud Token
+resource "aws_secretsmanager_secret" "avrae_bot_dicecloud_token" {
+  name        = "avrae/${var.env}/avrae-bot-dicecloud-token"
+  description = "Dicecloud token for the Avrae Bot."
+  tags        = "${local.common_tags}"
+}
+
+# Secrets Manager Secret - Avrae Discord Bot List Token
+resource "aws_secretsmanager_secret" "avrae_bot_dbl_token" {
+  name        = "avrae/${var.env}/avrae-bot-dbl-token"
+  description = "Discord Bot List token for the Avrae Bot."
+  tags        = "${local.common_tags}"
+}
+
+# Secrets Manager Secret - Avrae Google API Service File
+resource "aws_secretsmanager_secret" "avrae_bot_google_service" {
+  name        = "avrae/${var.env}/avrae-bot-google-service"
+  description = "Google Service Account for the Avrae Bot."
   tags        = "${local.common_tags}"
 }
 
@@ -244,6 +272,7 @@ module "avrae_bot_ecs" {
   service_port          = 80
   vpc_id                = "${module.ecs_vpc.aws_vpc_main_id}"
   cluster_id            = "${module.ecs_avrae.cluster_id}"
+
   common_name           = "Avrae Bot"
   cluster_name          = "${var.service}-${var.env}"
   env                   = "${var.env}"
@@ -256,13 +285,20 @@ module "avrae_bot_ecs" {
                             "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
                           ]
   environment_variables = [
-                            {"name" = "REDIS_URL", value = "${module.redis_avrae.hostname}"}
+                            {"name" = "REDIS_URL", value = "${module.redis_avrae.hostname}"},
+                            {"name" = "DISCORD_OWNER_USER_ID", value = "${var.discord_owner_id}"},
+                            {"name" = "DICECLOUD_USER", value = "${var.dicecloud_username}"},
                           ]
   secrets               = [
                             {"name" = "MONGO_URL", valueFrom = "${aws_secretsmanager_secret.mongo_url.arn}"},
-                            {"name" = "SENTRY_DSN", valueFrom = "${aws_secretsmanager_secret.avrae_bot_sentry_dsn.arn}"},
-                            {"name" = "DISCORD_BOT_TOKEN", valueFrom = "${aws_secretsmanager_secret.avrae_bot_discord_token.arn}"}
+                            {"name" = "SENTRY_DSN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_sentry_dsn.arn}"},
+                            {"name" = "DISCORD_BOT_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_discord_token.arn}"},
+                            {"name" = "DICECLOUD_PASS", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_dicecloud_pass.arn}"},
+                            {"name" = "DICECLOUD_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_dicecloud_token.arn}"},
+                            {"name" = "DBL_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_dbl_token.arn}"},
+                            {"name" = "GOOGLE_SERVICE_ACCOUNT", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_google_service.arn}"},
                           ]
+
   # restart container instantly on deploy
   deployment_minimum_healthy_percent  = 0
   deployment_maximum_percent          = 100

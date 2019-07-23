@@ -30,6 +30,14 @@ variable "mongodb_password" {
   description = "MongoDB password"
 }
 
+variable "discord_owner_id" {
+  description = "Discord User ID of the owner of the Avrae bot"
+}
+
+variable "dicecloud_username" {
+  description = "Dicecloud username of the Avrae bot"
+}
+
 variable "whitelist_cidrs" {
   type        = "list"
   description = "IP CIDRs to whitelist globally"
