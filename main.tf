@@ -250,7 +250,7 @@ module "avrae_service_ecs" {
                             "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
                           ]
   environment_variables = [
-                            {"name" = "REDIS_URL", value = "${module.redis_avrae.hostname}"}
+                            {"name" = "REDIS_URL", value = "redis://${module.redis_avrae.hostname}"}
                           ]
   secrets               = [
                             {"name" = "MONGO_URL", valueFrom = "${aws_secretsmanager_secret.mongo_url.arn}"},
