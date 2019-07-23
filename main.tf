@@ -180,8 +180,7 @@ module "ecs_avrae" {
 
 # ECS Fargate - Taine - Service
 module "taine_ecs" {
-  source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
-  version = "1.2.0"
+  source  = "./modules/ecs-fargate"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
   aws_lb_id             = "${module.ecs_avrae.lb_external_listener}"
@@ -193,6 +192,7 @@ module "taine_ecs" {
   service_port          = 8378
   health_check          = "/github"
   instance_count        = 1
+  max_instance_count    = 1
 
   # restart container instantly on deploy
   deployment_minimum_healthy_percent  = 0
@@ -225,8 +225,7 @@ module "taine_ecs" {
 
 # ECS Fargate - Avrae Service - Service
 module "avrae_service_ecs" {
-  source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
-  version = "1.0.1"
+  source  = "./modules/ecs-fargate"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
   aws_lb_id             = "${module.ecs_avrae.lb_external_listener}"
@@ -261,8 +260,7 @@ module "avrae_service_ecs" {
 
 # ECS Fargate - Avrae Bot - Service
 module "avrae_bot_ecs" {
-  source  = "app.terraform.io/Fandom/ecs_fargate_service/aws"
-  version = "1.2.0"
+  source  = "./modules/ecs-fargate"
   private_subnets       = ["${module.ecs_vpc.private_subnet_ids}"]
   public_subnets        = ["${module.ecs_vpc.public_subnet_ids}"]
   aws_lb_id             = "${module.ecs_avrae.lb_internal_listener}"
@@ -305,6 +303,8 @@ module "avrae_bot_ecs" {
   deployment_minimum_healthy_percent  = 0
   deployment_maximum_percent          = 100
   lb_deregistration_delay             = 0
+  instance_count                      = 1
+  max_instance_count                  = 1
 }
 
 
@@ -376,7 +376,10 @@ module "redis_avrae" {
   env                          = "${var.env}"
   service                      = "${var.service}"
   group                        = "${var.group}"
-  redis_whitelist_sgs          = []
+  redis_whitelist_sgs          = [
+      "${module.avrae_bot_ecs.security_group_id}",
+      "${module.avrae_service_ecs.security_group_id}",
+    ]
   automatic_failover           = "true"
   engine_version               = "4.0.10"
   cluster_parameter_group_name = "default.redis4.0"
@@ -391,7 +394,15 @@ module "redis_avrae" {
 # MongoDB
 module "mongodb_avrae" {
   source = "./modules/mongodb"
-  mongodb_whitelist_sgs = "${aws_instance.dev_mdb_access.vpc_security_group_ids}" # ["${aws_security_group.office_access.id}"]
+  mongodb_whitelist_sgs = "${concat(
+    aws_instance.dev_mdb_access.vpc_security_group_ids,
+    list(
+      module.avrae_bot_ecs.security_group_id,
+      module.avrae_service_ecs.security_group_id,
+    )
+  )}"
+
+
   service               = "${var.service}"
   env                   = "${var.env}"
   group                 = "${var.group}"
