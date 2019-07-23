@@ -305,6 +305,10 @@ module "avrae_bot_ecs" {
   lb_deregistration_delay             = 0
   instance_count                      = 1
   max_instance_count                  = 1
+
+  # 1 vCPU, 8GB RAM
+  fargate_cpu    = 1024
+  fargate_memory = 8192
 }
 
 

@@ -22,16 +22,6 @@ variable "fargate_memory" {
   default = "1024"
 }
 
-variable "fargate_task_cpu" {
-  description = "Defines how many CPU units to assign to the fargate task."
-  default = "512"
-}
-
-variable "fargate_task_memory" {
-  description = "Defines how much RAM to provision in MB to the fargate task."
-  default = "1024"
-}
-
 variable "service_port" {
   description = "Port serving traffic for the service."
   default = 8081
