@@ -250,7 +250,7 @@ module "avrae_service_ecs" {
                             "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
                           ]
   environment_variables = [
-//                            {"name" = "REDIS_URL", value = "redis://${module.redis_avrae.hostname}"}
+                            {"name" = "REDIS_URL", value = "redis://${module.redis_avrae.hostname}"}
                           ]
   secrets               = [
                             {"name" = "MONGO_URL", valueFrom = "${aws_secretsmanager_secret.mongo_url.arn}"},
@@ -281,7 +281,7 @@ module "avrae_bot_ecs" {
                             "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
                           ]
   environment_variables = [
-//                            {"name" = "REDIS_URL", value = "redis://${module.redis_avrae.hostname}"},
+                            {"name" = "REDIS_URL", value = "redis://${module.redis_avrae.hostname}"},
                             {"name" = "DISCORD_OWNER_USER_ID", value = "${var.discord_owner_id}"},
                             {"name" = "DICECLOUD_USER", value = "${var.dicecloud_username}"},
                           ]
@@ -354,32 +354,32 @@ resource "aws_route53_zone" "service" {
 }
 
 # Redis
-//module "redis_avrae" {
-//  source                       = "app.terraform.io/Fandom/redis/aws"
-//  version                      = "2.0.2"
-//
-//  name                         = "Avrae"
-//  num_dbs                      = "2"
-//  instance_type                = "cache.t2.micro"
-//  common_name                  = "${var.common_name}"
-//  env                          = "${var.env}"
-//  service                      = "${var.service}"
-//  group                        = "${var.group}"
-//  redis_whitelist_sgs          = [
-//      "${module.avrae_bot_ecs.security_group_id}",
-//      "${module.avrae_service_ecs.security_group_id}",
-//    ]
-//  num_redis_whitelist_sgs      = 2
-//  automatic_failover           = "true"
-//  engine_version               = "4.0.10"
-//  cluster_parameter_group_name = "default.redis4.0"
-//  parameter_group_name         = "default.redis4.0"
-//  local_zone_id                = "${aws_route53_zone.service.id}"
-//  subnet_ids                   = [
-//                                  "${module.ecs_vpc.private_subnet_ids}"
-//                                ]
-//  vpc_id                       = "${module.ecs_vpc.aws_vpc_main_id}"
-//}
+module "redis_avrae" {
+  source                       = "app.terraform.io/Fandom/redis/aws"
+  version                      = "2.0.2"
+
+  name                         = "Avrae"
+  num_dbs                      = "2"
+  instance_type                = "cache.t2.micro"
+  common_name                  = "${var.common_name}"
+  env                          = "${var.env}"
+  service                      = "${var.service}"
+  group                        = "${var.group}"
+  redis_whitelist_sgs          = [
+      "${module.avrae_bot_ecs.security_group_id}",
+      "${module.avrae_service_ecs.security_group_id}",
+    ]
+  num_redis_whitelist_sgs      = 2
+  automatic_failover           = "true"
+  engine_version               = "4.0.10"
+  cluster_parameter_group_name = "default.redis4.0"
+  parameter_group_name         = "default.redis4.0"
+  local_zone_id                = "${aws_route53_zone.service.id}"
+  subnet_ids                   = [
+                                  "${module.ecs_vpc.private_subnet_ids}"
+                                ]
+  vpc_id                       = "${module.ecs_vpc.aws_vpc_main_id}"
+}
 
 # MongoDB
 module "mongodb_avrae" {
