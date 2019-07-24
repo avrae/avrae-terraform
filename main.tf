@@ -454,11 +454,3 @@ resource "aws_instance" "dev_mdb_access" {
             )
           )}"
 }
-
-# S3 bucket for media.avrae.io
-resource "aws_s3_bucket" "media_bucket" {
-  bucket = "o76wt8-${var.service}-${var.env}-media-bucket"
-  acl    = "private"
-
-  tags   = "${local.common_tags}"
-}
