@@ -360,7 +360,7 @@ module "redis_avrae" {
 
   name                         = "Avrae"
   num_dbs                      = "2"
-  instance_type                = "cache.m5.large"
+  instance_type                = "cache.t2.micro"
   common_name                  = "${var.common_name}"
   env                          = "${var.env}"
   service                      = "${var.service}"
