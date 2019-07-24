@@ -14,9 +14,9 @@ output "deploy_iam_access_key" {
   value = "${module.iam_deploy.iam_access_key}"
 }
 
-output "avrae_redis_hostname" {
-  value = "${module.redis_avrae.hostname}"
-}
+//output "avrae_redis_hostname" {
+//  value = "${module.redis_avrae.hostname}"
+//}
 
 output "ec2_mdb_access_ip" {
   value = "${aws_instance.dev_mdb_access.public_dns}"
