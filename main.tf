@@ -361,6 +361,20 @@ resource "aws_lb_listener_rule" "taine_ecs" {
   }
 }
 
+resource "aws_lb_listener_rule" "taine_ecs_https" {
+  listener_arn = "${aws_lb_listener.front_end_https.arn}"
+
+  action {
+    type             = "forward"
+    target_group_arn = "${module.taine_ecs.target_group_id}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/github*"]
+  }
+}
+
 # Avrae DNS Zone
 resource "aws_route53_zone" "service" {
   name = "${var.service}-${var.env}.curse.us"
