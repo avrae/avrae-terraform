@@ -297,8 +297,8 @@ module "avrae_bot_ecs" {
                             {"name" = "REDIS_URL", value = "redis://${module.redis_avrae.hostname}"},
                             {"name" = "DISCORD_OWNER_USER_ID", value = "${var.discord_owner_id}"},
                             {"name" = "DICECLOUD_USER", value = "${var.dicecloud_username}"},
-                            #{"name" = "NEW_RELIC_CONFIG_FILE", value = "newrelic.ini"},
-                            #{"name" = "NEW_RELIC_ENVIRONMENT", value = "production"},
+                            {"name" = "NEW_RELIC_CONFIG_FILE", value = "newrelic.ini"},
+                            {"name" = "NEW_RELIC_ENVIRONMENT", value = "production"},
                           ]
   secrets               = [
                             {"name" = "MONGO_URL", valueFrom = "${aws_secretsmanager_secret.mongo_url.arn}"},
@@ -308,7 +308,7 @@ module "avrae_bot_ecs" {
                             {"name" = "DICECLOUD_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_dicecloud_token.arn}"},
                             {"name" = "DBL_TOKEN", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_dbl_token.arn}"},
                             {"name" = "GOOGLE_SERVICE_ACCOUNT", "valueFrom" = "${aws_secretsmanager_secret.avrae_bot_google_service.arn}"},
-                            #{"name" = "NEW_RELIC_LICENSE_KEY", "valueFrom" = "${aws_secretsmanager_secret.new_relic_license_key.arn}"},
+                            {"name" = "NEW_RELIC_LICENSE_KEY", "valueFrom" = "${aws_secretsmanager_secret.new_relic_license_key.arn}"},
                           ]
 
   # restart container instantly on deploy
