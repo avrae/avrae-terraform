@@ -130,7 +130,7 @@ module "ecr_avrae_bot" {
 # ECR - Avrae Service
 module "ecr_avrae_service" {
   source  = "app.terraform.io/Fandom/ecr/aws"
-  version = "1.0.0"
+  version = "1.12.2"
 
   env      = var.env
   service  = var.service
