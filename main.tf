@@ -108,7 +108,7 @@ resource "aws_secretsmanager_secret" "avrae_bot_google_service" {
 # ECR - Taine
 module "ecr_taine" {
   source  = "app.terraform.io/Fandom/ecr/aws"
-  version = "1.0.0"
+  version = "1.12.2"
 
   env      = var.env
   service  = var.service
@@ -119,7 +119,7 @@ module "ecr_taine" {
 # ECR - Avrae Bot
 module "ecr_avrae_bot" {
   source  = "app.terraform.io/Fandom/ecr/aws"
-  version = "1.0.0"
+  version = "1.12.2"
 
   env      = var.env
   service  = var.service
