@@ -15,11 +15,11 @@ variable "common_name" {
 }
 
 variable "vpc_id" {
-    description = "Default VPC from DDB"
+  description = "Default VPC from DDB"
 }
 
 variable "subnet_ids" {
-  type = "list"
+  type        = list(string)
   description = "List of subnet ids"
 }
 
@@ -32,7 +32,8 @@ variable "mongodb_password" {
 }
 
 variable "mongodb_whitelist_sgs" {
-  type        = "list"
+  type        = list(string)
   description = "List of security groups to whitelist MongoDB access from."
   default     = []
 }
+

@@ -39,7 +39,7 @@ variable "dicecloud_username" {
 }
 
 variable "whitelist_cidrs" {
-  type        = "list"
+  type        = list(string)
   description = "IP CIDRs to whitelist globally"
 }
 
@@ -49,9 +49,10 @@ variable "dev_access_pubkey" {
 
 variable "cert_domain" {
   description = "Used for defining the domain used for the certificate which is used on the load balancer."
-  default = "*.dndbeyond.com"
+  default     = "*.dndbeyond.com"
 }
 
 variable "network_range" {
   description = "Used to specify the network range we use, ie 192.168.0.0/16"
 }
+

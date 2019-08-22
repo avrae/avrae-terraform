@@ -4,7 +4,7 @@ resource "aws_iam_user" "service_deploy" {
 }
 
 resource "aws_iam_access_key" "service_deploy" {
-  user = "${aws_iam_user.service_deploy.name}"
+  user = aws_iam_user.service_deploy.name
 }
 
 resource "aws_iam_policy" "service_deploy_policy" {
@@ -49,9 +49,11 @@ resource "aws_iam_policy" "service_deploy_policy" {
   ]
 }
 EOF
+
 }
 
 resource "aws_iam_user_policy_attachment" "service_deploy_policy_attach" {
-  user      = "${aws_iam_user.service_deploy.name}"
-  policy_arn = "${aws_iam_policy.service_deploy_policy.arn}"
+  user = aws_iam_user.service_deploy.name
+  policy_arn = aws_iam_policy.service_deploy_policy.arn
 }
+
