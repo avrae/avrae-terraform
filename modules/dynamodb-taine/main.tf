@@ -1,8 +1,8 @@
 locals {
   common_tags = {
-    Component   = "${var.service}"
-    Environment = "${var.env}"
-    Team        = "${var.group}"
+    Component   = var.service
+    Environment = var.env
+    Team        = var.group
   }
 }
 
@@ -12,7 +12,7 @@ resource "aws_dynamodb_table" "reports_dynamodb_table" {
   read_capacity  = 10
   write_capacity = 10
   hash_key       = "report_id"
-  tags           = "${local.common_tags}"
+  tags           = local.common_tags
 
   attribute {
     name = "report_id"
@@ -32,20 +32,20 @@ resource "aws_dynamodb_table" "reports_dynamodb_table" {
   }
 
   global_secondary_index {
-    name               = "message_id"
-    hash_key           = "message"
-    write_capacity     = 10
-    read_capacity      = 10
-    projection_type    = "ALL"
+    name            = "message_id"
+    hash_key        = "message"
+    write_capacity  = 10
+    read_capacity   = 10
+    projection_type = "ALL"
   }
 
   global_secondary_index {
-    name               = "github_issue"
-    hash_key           = "github_issue"
-    range_key          = "github_repo"
-    write_capacity     = 10
-    read_capacity      = 10
-    projection_type    = "ALL"
+    name            = "github_issue"
+    hash_key        = "github_issue"
+    range_key       = "github_repo"
+    write_capacity  = 10
+    read_capacity   = 10
+    projection_type = "ALL"
   }
 }
 
@@ -55,7 +55,7 @@ resource "aws_dynamodb_table" "reportnums_dynamodb_table" {
   read_capacity  = 10
   write_capacity = 10
   hash_key       = "identifier"
-  tags           = "${local.common_tags}"
+  tags           = local.common_tags
 
   attribute {
     name = "identifier"
@@ -68,7 +68,7 @@ resource "aws_iam_policy" "dynamo_iam_policy" {
   name        = "taine-dynamo-policy-${var.env}"
   path        = "/"
   description = "Policy limiting dynamo access for Taine"
-  policy = <<EOF
+  policy      = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -85,4 +85,6 @@ resource "aws_iam_policy" "dynamo_iam_policy" {
     ]
 }
 EOF
+
 }
+

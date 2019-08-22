@@ -1,8 +1,8 @@
 locals {
   common_tags = {
-    Component   = "${var.service}"
-    Environment = "${var.env}"
-    Team        = "${var.group}"
+    Component   = var.service
+    Environment = var.env
+    Team        = var.group
   }
 }
 
@@ -25,33 +25,36 @@ resource "aws_iam_role" "ecs_service_role" {
 }
 EOF
 
-  tags = "${merge(local.common_tags,
-            map(
-            "Name", "${var.common_name} ECS Role",
-            "Environment", "${var.env}"
-            )
-          )}"
+
+  tags = merge(
+    local.common_tags,
+    {
+      "Name" = "${var.common_name} ECS Role"
+      "Environment" = var.env
+    },
+  )
 }
 
 resource "aws_iam_role_policy_attachment" "role_policy_attach" {
-  count      = "${length(var.ecs_role_policy_arns)}"
-  role       = "${aws_iam_role.ecs_service_role.name}"
-  policy_arn = "${element(var.ecs_role_policy_arns, count.index)}"
+  count = length(var.ecs_role_policy_arns)
+  role = aws_iam_role.ecs_service_role.name
+  policy_arn = element(var.ecs_role_policy_arns, count.index)
 }
 
 resource "aws_ecs_task_definition" "service_task_definition" {
-  family                   = "${var.service}-ecs-task-definition"
-  network_mode             = "awsvpc"
+  family = "${var.service}-ecs-task-definition"
+  network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "${var.fargate_cpu}"
-  memory                   = "${var.fargate_memory}"
-  task_role_arn            = "${aws_iam_role.ecs_service_role.arn}"
-  execution_role_arn       = "${aws_iam_role.ecs_service_role.arn}"
-  tags                     = "${merge(local.common_tags,
-                                map(
-                                "Name", "${var.common_name} Task Definition"
-                                )
-                              )}"
+  cpu = var.fargate_cpu
+  memory = var.fargate_memory
+  task_role_arn = aws_iam_role.ecs_service_role.arn
+  execution_role_arn = aws_iam_role.ecs_service_role.arn
+  tags = merge(
+    local.common_tags,
+    {
+      "Name" = "${var.common_name} Task Definition"
+    },
+  )
 
   container_definitions = <<DEFINITION
 [
@@ -74,19 +77,21 @@ resource "aws_ecs_task_definition" "service_task_definition" {
   }
 ]
 DEFINITION
+
 }
 
 resource "aws_ecs_service" "service" {
-  name                               = "${var.service_name}"
-  cluster                            = "${var.cluster_id}" #"${aws_ecs_cluster.service_cluster.id}"
-  task_definition                    = "${aws_ecs_task_definition.service_task_definition.arn}"
-  desired_count                      = "${var.instance_count}"
-  launch_type                        = "FARGATE"
-  deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
-  deployment_maximum_percent         = "${var.deployment_maximum_percent}"
+name                               = var.service_name
+cluster                            = var.cluster_id #"${aws_ecs_cluster.service_cluster.id}"
+task_definition                    = aws_ecs_task_definition.service_task_definition.arn
+desired_count                      = var.instance_count
+launch_type                        = "FARGATE"
+deployment_minimum_healthy_percent = var.deployment_minimum_healthy_percent
+deployment_maximum_percent         = var.deployment_maximum_percent
 
-  network_configuration {
-    security_groups = ["${aws_security_group.ecs_tasks.id}"]
-    subnets         = ["${var.private_subnets}"]
-  }
+network_configuration {
+security_groups = [aws_security_group.ecs_tasks.id]
+subnets         = var.private_subnets
 }
+}
+
