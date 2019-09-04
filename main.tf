@@ -606,10 +606,9 @@ module "redis_avrae_nightly" {
   service       = var.service
   group         = var.group
   redis_whitelist_sgs = [
-    module.avrae_bot_ecs.security_group_id,
-    module.avrae_service_ecs.security_group_id,
+    module.avrae_bot_nightly_ecs.security_group_id,
   ]
-  num_redis_whitelist_sgs      = 2
+  num_redis_whitelist_sgs      = 1
   automatic_failover           = "true"
   engine_version               = "4.0.10"
   cluster_parameter_group_name = "default.redis4.0"
@@ -621,7 +620,10 @@ module "redis_avrae_nightly" {
 # MongoDB
 module "mongodb_avrae" {
   source = "./modules/mongodb"
-  mongodb_whitelist_sgs = list(aws_security_group.office_access.id, module.avrae_bot_ecs.security_group_id, module.avrae_service_ecs.security_group_id)
+  mongodb_whitelist_sgs = list(
+    aws_security_group.office_access.id, module.avrae_bot_ecs.security_group_id, module.avrae_service_ecs.security_group_id,
+    module.avrae_bot_nightly_ecs.security_group_id
+  )
 
   service          = var.service
   env              = var.env
