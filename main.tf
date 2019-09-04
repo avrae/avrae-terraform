@@ -598,7 +598,7 @@ module "redis_avrae" {
 module "redis_avrae_nightly" {
   source  = "app.terraform.io/Fandom/redis/aws"
   version = "4.12.0"
-  name          = "Avrae Nightly"
+  name          = "Avrae-Nightly"
   num_dbs       = "2"
   instance_type = "cache.t2.micro"
   common_name   = var.common_name
