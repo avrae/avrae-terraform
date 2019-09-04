@@ -223,34 +223,34 @@ module "taine_ecs" {
   ]
   environment_variables = [
     {
-      "name" = "DYNAMODB_URL"
+      name = "DYNAMODB_URL"
       value  = "https://dynamodb.us-east-1.amazonaws.com"
     },
     {
-      "name" = "NEW_RELIC_CONFIG_FILE"
+      name = "NEW_RELIC_CONFIG_FILE"
       value  = "newrelic.ini"
     },
     {
-      "name" = "NEW_RELIC_ENVIRONMENT"
+      name = "NEW_RELIC_ENVIRONMENT"
       value  = "production"
     },
   ]
   secrets = [
     {
-      "name"      = "DISCORD_TOKEN"
-      "valueFrom" = aws_secretsmanager_secret.taine_discord_token.arn
+      name      = "DISCORD_TOKEN"
+      valueFrom = aws_secretsmanager_secret.taine_discord_token.arn
     },
     {
-      "name"      = "GITHUB_TOKEN"
-      "valueFrom" = aws_secretsmanager_secret.taine_github_token.arn
+      name      = "GITHUB_TOKEN"
+      valueFrom = aws_secretsmanager_secret.taine_github_token.arn
     },
     {
-      "name"      = "NEW_RELIC_LICENSE_KEY"
-      "valueFrom" = aws_secretsmanager_secret.new_relic_license_key.arn
+      name      = "NEW_RELIC_LICENSE_KEY"
+      valueFrom = aws_secretsmanager_secret.new_relic_license_key.arn
     },
     {
-      "name"      = "SENTRY_DSN"
-      "valueFrom" = aws_secretsmanager_secret.taine_sentry_dsn.arn
+      name      = "SENTRY_DSN"
+      valueFrom = aws_secretsmanager_secret.taine_sentry_dsn.arn
     },
   ]
 }
@@ -283,30 +283,30 @@ module "avrae_service_ecs" {
   ]
   environment_variables = [
     {
-      "name" = "NEW_RELIC_CONFIG_FILE"
+      name = "NEW_RELIC_CONFIG_FILE"
       value  = "newrelic.ini"
     },
     {
-      "name" = "NEW_RELIC_ENVIRONMENT"
+      name = "NEW_RELIC_ENVIRONMENT"
       value  = "production"
     },
     {
-      "name" = "REDIS_URL"
+      name = "REDIS_URL"
       value  = "redis://${module.redis_avrae.hostname}"
     },
   ]
   secrets = [
     {
-      "name"    = "MONGO_URL"
+      name    = "MONGO_URL"
       valueFrom = aws_secretsmanager_secret.mongo_url.arn
     },
     {
-      "name"      = "NEW_RELIC_LICENSE_KEY"
-      "valueFrom" = aws_secretsmanager_secret.new_relic_license_key.arn
+      name      = "NEW_RELIC_LICENSE_KEY"
+      valueFrom = aws_secretsmanager_secret.new_relic_license_key.arn
     },
     {
-      "name"      = "SENTRY_DSN"
-      "valueFrom" = aws_secretsmanager_secret.avrae_service_sentry_dsn.arn
+      name      = "SENTRY_DSN"
+      valueFrom = aws_secretsmanager_secret.avrae_service_sentry_dsn.arn
     },
   ]
 }
@@ -335,58 +335,58 @@ module "avrae_bot_ecs" {
   ]
   environment_variables = [
     {
-      "name" = "REDIS_URL"
+      name = "REDIS_URL"
       value  = "redis://${module.redis_avrae.hostname}"
     },
     {
-      "name" = "DISCORD_OWNER_USER_ID"
+      name = "DISCORD_OWNER_USER_ID"
       value  = var.discord_owner_id
     },
     {
-      "name" = "DICECLOUD_USER"
+      name = "DICECLOUD_USER"
       value  = var.dicecloud_username
     },
     {
-      "name" = "NEW_RELIC_CONFIG_FILE"
+      name = "NEW_RELIC_CONFIG_FILE"
       value  = "newrelic.ini"
     },
     {
-      "name" = "NEW_RELIC_ENVIRONMENT"
+      name = "NEW_RELIC_ENVIRONMENT"
       value  = "production"
     },
   ]
   secrets = [
     {
-      "name"    = "MONGO_URL"
+      name    = "MONGO_URL"
       valueFrom = aws_secretsmanager_secret.mongo_url.arn
     },
     {
-      "name"      = "SENTRY_DSN"
-      "valueFrom" = aws_secretsmanager_secret.avrae_bot_sentry_dsn.arn
+      name      = "SENTRY_DSN"
+      valueFrom = aws_secretsmanager_secret.avrae_bot_sentry_dsn.arn
     },
     {
-      "name"      = "DISCORD_BOT_TOKEN"
-      "valueFrom" = aws_secretsmanager_secret.avrae_bot_discord_token.arn
+      name      = "DISCORD_BOT_TOKEN"
+      valueFrom = aws_secretsmanager_secret.avrae_bot_discord_token.arn
     },
     {
-      "name"      = "DICECLOUD_PASS"
-      "valueFrom" = aws_secretsmanager_secret.avrae_bot_dicecloud_pass.arn
+      name      = "DICECLOUD_PASS"
+      valueFrom = aws_secretsmanager_secret.avrae_bot_dicecloud_pass.arn
     },
     {
-      "name"      = "DICECLOUD_TOKEN"
-      "valueFrom" = aws_secretsmanager_secret.avrae_bot_dicecloud_token.arn
+      name      = "DICECLOUD_TOKEN"
+      valueFrom = aws_secretsmanager_secret.avrae_bot_dicecloud_token.arn
     },
     {
-      "name"      = "DBL_TOKEN"
-      "valueFrom" = aws_secretsmanager_secret.avrae_bot_dbl_token.arn
+      name      = "DBL_TOKEN"
+      valueFrom = aws_secretsmanager_secret.avrae_bot_dbl_token.arn
     },
     {
-      "name"      = "GOOGLE_SERVICE_ACCOUNT"
-      "valueFrom" = aws_secretsmanager_secret.avrae_bot_google_service.arn
+      name      = "GOOGLE_SERVICE_ACCOUNT"
+      valueFrom = aws_secretsmanager_secret.avrae_bot_google_service.arn
     },
     {
-      "name"      = "NEW_RELIC_LICENSE_KEY"
-      "valueFrom" = aws_secretsmanager_secret.new_relic_license_key.arn
+      name      = "NEW_RELIC_LICENSE_KEY"
+      valueFrom = aws_secretsmanager_secret.new_relic_license_key.arn
     },
   ]
 
@@ -426,6 +426,7 @@ resource "aws_lb_listener" "front_end_https" {
   }
 }
 
+# taine.avrae.io/github
 resource "aws_lb_listener_rule" "taine_ecs" {
   listener_arn = aws_lb_listener.front_end_http.arn
 
