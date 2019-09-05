@@ -433,7 +433,7 @@ module "avrae_bot_nightly_ecs" {
   environment_variables = [
     {
       name = "REDIS_URL"
-      value  = "redis://${module.redis_avrae_nightly.hostname}"
+      value  = "redis://${module.redis_avrae.hostname}"
     },
     {
       name = "DISCORD_OWNER_USER_ID"
@@ -454,6 +454,10 @@ module "avrae_bot_nightly_ecs" {
     {
       name = "MONGODB_DB_NAME"
       value  = "nightly"
+    },
+    {
+      name = "REDIS_DB_NUM"
+      value  = "1"
     },
     {
       name = "ENVIRONMENT"
@@ -568,7 +572,7 @@ resource "aws_route53_zone" "service" {
   }
 }
 
-# Redis (Live)
+# Redis
 module "redis_avrae" {
   source  = "app.terraform.io/Fandom/redis/aws"
   version = "4.12.0"
@@ -582,37 +586,15 @@ module "redis_avrae" {
   group         = var.group
   redis_whitelist_sgs = [
     module.avrae_bot_ecs.security_group_id,
+    module.avrae_bot_nightly_ecs.security_group_id,
     module.avrae_service_ecs.security_group_id,
   ]
-  num_redis_whitelist_sgs      = 2
+  num_redis_whitelist_sgs      = 3
   automatic_failover           = "true"
   engine_version               = "4.0.10"
   cluster_parameter_group_name = "default.redis4.0"
   parameter_group_name         = "default.redis4.0"
   #local_zone_id                = aws_route53_zone.service.id
-  subnet_ids                   = module.ecs_vpc.private_subnet_ids
-  vpc_id = module.ecs_vpc.aws_vpc_main_id
-}
-
-# Redis (Nightly)
-module "redis_avrae_nightly" {
-  source  = "app.terraform.io/Fandom/redis/aws"
-  version = "4.12.0"
-  name          = "Avrae-Nightly"
-  num_dbs       = "2"
-  instance_type = "cache.t2.micro"
-  common_name   = var.common_name
-  env           = var.env
-  service       = var.service
-  group         = var.group
-  redis_whitelist_sgs = [
-    module.avrae_bot_nightly_ecs.security_group_id,
-  ]
-  num_redis_whitelist_sgs      = 1
-  automatic_failover           = "true"
-  engine_version               = "4.0.10"
-  cluster_parameter_group_name = "default.redis4.0"
-  parameter_group_name         = "default.redis4.0"
   subnet_ids                   = module.ecs_vpc.private_subnet_ids
   vpc_id = module.ecs_vpc.aws_vpc_main_id
 }
