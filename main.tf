@@ -711,6 +711,8 @@ POLICY
 
 resource "aws_iam_policy" "analytics_dms_policy" {
   name = "${var.service}-${var.env}-dms-policy"
+  path        = "/"
+  description = "Used to give S3 access to DMS"
 
   policy = <<POLICY
 {
@@ -740,8 +742,7 @@ resource "aws_iam_policy" "analytics_dms_policy" {
 POLICY
 }
 
-resource "aws_iam_policy_attachment" "analytics_dms_attachment" {
-  name       = "${var.service}-${var.env}-dms-policy-attachment"
+resource "aws_iam_role_policy_attachment" "analytics_dms_attachment" {
   role       = aws_iam_role.analytics_dms_role.name
   policy_arn = aws_iam_policy.analytics_dms_policy.arn
 }
