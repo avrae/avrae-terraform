@@ -56,3 +56,7 @@ variable "network_range" {
   description = "Used to specify the network range we use, ie 192.168.0.0/16"
 }
 
+variable "s3_prefix" {
+  description = "Used as a common prefix for service S3 buckets"
+}
+
