@@ -722,7 +722,8 @@ resource "aws_iam_policy" "analytics_dms_policy" {
             "Effect": "Allow",
             "Action": [
                 "s3:PutObject",
-                "s3:DeleteObject"
+                "s3:DeleteObject",
+                "s3:PutObjectTagging"
             ],
             "Resource": [
                 "${aws_s3_bucket.analytics_dbrestore.arn}*"
