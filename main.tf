@@ -604,7 +604,7 @@ module "mongodb_avrae" {
   source = "./modules/mongodb"
   mongodb_whitelist_sgs = list(
     aws_security_group.office_access.id, module.avrae_bot_ecs.security_group_id, module.avrae_service_ecs.security_group_id,
-    module.avrae_bot_nightly_ecs.security_group_id
+    module.avrae_bot_nightly_ecs.security_group_id, aws_security_group.analytics_dms_access.id
   )
 
   service          = var.service
@@ -749,4 +749,24 @@ POLICY
 resource "aws_iam_role_policy_attachment" "analytics_dms_attachment" {
   role       = aws_iam_role.analytics_dms_role.name
   policy_arn = aws_iam_policy.analytics_dms_policy.arn
+}
+
+# DMS Access to MongoDB
+resource "aws_security_group" "analytics_dms_access" {
+  name        = "${var.service}-${var.env}-dms-access"
+  description = "Security group attached to Avrae DMS"
+  vpc_id      = module.ecs_vpc.aws_vpc_main_id
+  tags = {
+    Name = "${var.service}-${var.env} DMS Access"
+    env  = var.env
+  }
+}
+
+resource "aws_security_group_rule" "analytics_egress" {
+  type              = "egress"
+  protocol          = "-1"
+  from_port         = 0
+  to_port           = 0
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.analytics_dms_access.id
 }
