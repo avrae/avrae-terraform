@@ -692,7 +692,10 @@ resource "aws_iam_role" "analytics_dms_role" {
     {
       "Action": "sts:AssumeRole",
       "Principal": {
-        "Service": "s3.amazonaws.com"
+        "Service": [
+          "s3.amazonaws.com",
+          "dms.amazonaws.com"
+        ]
       },
       "Effect": "Allow",
       "Sid": ""
