@@ -45,7 +45,27 @@ resource "aws_iam_policy" "service_deploy_policy" {
      "Resource": [
        "*"
      ]
-   }
+   },
+    {
+        "Effect": "Allow",
+        "Action": [
+            "s3:PutObject",
+            "s3:DeleteObject",
+            "s3:PutObjectTagging"
+        ],
+        "Resource": [
+            "arn:aws:s3:::media.avrae.io*"
+        ]
+    },
+    {
+        "Effect": "Allow",
+        "Action": [
+            "s3:ListBucket"
+        ],
+        "Resource": [
+            "arn:aws:s3:::media.avrae.io*"
+        ]
+    }
   ]
 }
 EOF
