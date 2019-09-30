@@ -604,7 +604,7 @@ module "mongodb_avrae" {
   source = "./modules/mongodb"
   mongodb_whitelist_sgs = list(
     aws_security_group.office_access.id, module.avrae_bot_ecs.security_group_id, module.avrae_service_ecs.security_group_id,
-    module.avrae_bot_nightly_ecs.security_group_id, aws_security_group.analytics_dms_access.id
+    module.avrae_bot_nightly_ecs.security_group_id, module.analytics_avrae.security_group_id
   )
 
   service          = var.service
