@@ -604,7 +604,7 @@ module "mongodb_avrae" {
   source = "./modules/mongodb"
   mongodb_whitelist_sgs = list(
     aws_security_group.office_access.id, module.avrae_bot_ecs.security_group_id, module.avrae_service_ecs.security_group_id,
-    module.avrae_bot_nightly_ecs.security_group_id, module.analytics_avrae.security_group_id
+    module.avrae_bot_nightly_ecs.security_group_id #, module.analytics_avrae.security_group_id
   )
 
   service          = var.service
@@ -669,14 +669,14 @@ resource "aws_instance" "dev_mdb_access" {
 }
 
 # Analytics
-module "analytics_avrae" {
-  source = "./modules/avrae-analytics"
-
-  service          = var.service
-  env              = var.env
-  group            = var.group
-  common_name      = var.common_name
-  region           = var.region
-  s3_prefix        = var.s3_prefix
-  vpc_id           = module.ecs_vpc.aws_vpc_main_id
-}
+//module "analytics_avrae" {
+//  source = "./modules/avrae-analytics"
+//
+//  service          = var.service
+//  env              = var.env
+//  group            = var.group
+//  common_name      = var.common_name
+//  region           = var.region
+//  s3_prefix        = var.s3_prefix
+//  vpc_id           = module.ecs_vpc.aws_vpc_main_id
+//}
