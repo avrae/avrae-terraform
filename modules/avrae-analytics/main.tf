@@ -114,7 +114,6 @@ resource "aws_security_group_rule" "analytics_egress" {
 # ==== GLUE ====
 
 # Glue access to S3
-# DMS access to S3 bucket
 resource "aws_iam_role" "analytics_glue_role" {
   name = "AWSGlueServiceRole-${var.service}-${var.env}-crawler"
 
@@ -126,7 +125,7 @@ resource "aws_iam_role" "analytics_glue_role" {
       "Action": "sts:AssumeRole",
       "Principal": {
         "Service": [
-          "s3.amazonaws.com"
+          "glue.amazonaws.com"
         ]
       },
       "Effect": "Allow",
