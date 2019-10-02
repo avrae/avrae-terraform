@@ -126,8 +126,7 @@ resource "aws_iam_role" "analytics_glue_role" {
       "Action": "sts:AssumeRole",
       "Principal": {
         "Service": [
-          "s3.amazonaws.com",
-          "dms.amazonaws.com"
+          "s3.amazonaws.com"
         ]
       },
       "Effect": "Allow",
@@ -140,7 +139,7 @@ POLICY
   tags = merge(
     local.common_tags,
     {
-      "Name" = "${var.common_name} DMS Role"
+      "Name" = "${var.common_name} Glue Role"
     },
   )
 }
@@ -158,7 +157,8 @@ resource "aws_iam_policy" "analytics_glue_policy" {
             "Effect": "Allow",
             "Action": [
                 "s3:ListBucket",
-                "s3:GetObject"
+                "s3:GetObject",
+                "s3:PutObject"
             ],
             "Resource": [
                 "${aws_s3_bucket.analytics_dbrestore.arn}*"
@@ -172,9 +172,4 @@ POLICY
 resource "aws_iam_role_policy_attachment" "analytics_glue_s3_attachment" {
   role       = aws_iam_role.analytics_glue_role.name
   policy_arn = aws_iam_policy.analytics_glue_policy.arn
-}
-
-resource "aws_iam_role_policy_attachment" "analytics_glue_attachment" {
-  role       = aws_iam_role.analytics_glue_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSGlueServiceRole"
 }
