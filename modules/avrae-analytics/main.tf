@@ -111,6 +111,43 @@ resource "aws_security_group_rule" "analytics_egress" {
   security_group_id = aws_security_group.analytics_dms_access.id
 }
 
+# ---- DMS Scheduled Job ----
+# User and policy attachment
+resource "aws_iam_user" "dms_cron_user" {
+  name = "${var.service}-${var.env}-dms"
+}
+
+resource "aws_iam_access_key" "dms_cron" {
+  user = aws_iam_user.dms_cron_user.name
+}
+
+resource "aws_iam_policy" "dms_cron_policy" {
+  name        = "${var.service}-${var.env}-dms-cron"
+  path        = "/"
+  description = "Used to give access for the DMS cron user"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "dms:*",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+
+}
+
+resource "aws_iam_user_policy_attachment" "dms_cron_policy_attach" {
+  user = aws_iam_user.dms_cron_user.name
+  policy_arn = aws_iam_policy.dms_cron_policy.arn
+}
+
+
+
 # ==== GLUE ====
 
 # Glue access to S3
