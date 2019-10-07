@@ -132,7 +132,7 @@ resource "aws_iam_policy" "dms_cron_policy" {
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": "dms:*",
+      "Action": "dms:StartReplicationTask",
       "Resource": "*"
     }
   ]
