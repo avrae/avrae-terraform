@@ -274,9 +274,9 @@ resource "aws_iam_policy" "analytics_lambda_policy" {
 POLICY
 }
 
-resource "aws_iam_role_policy_attachment" "analytics_dms_attachment" {
-  role       = aws_iam_role.analytics_dms_role.name
-  policy_arn = aws_iam_policy.analytics_dms_policy.arn
+resource "aws_iam_role_policy_attachment" "analytics_lambda_attachment" {
+  role       = aws_iam_role.analytics_lambda_role.name
+  policy_arn = aws_iam_policy.analytics_lambda_policy.arn
 }
 
 resource "aws_security_group" "analytics_daily_lambda" {
