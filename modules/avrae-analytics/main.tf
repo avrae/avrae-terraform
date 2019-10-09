@@ -279,6 +279,11 @@ resource "aws_iam_role_policy_attachment" "analytics_lambda_attachment" {
   policy_arn = aws_iam_policy.analytics_lambda_policy.arn
 }
 
+resource "aws_iam_role_policy_attachment" "analytics_lambda_attachment_2" {
+  role       = aws_iam_role.analytics_lambda_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
+
 resource "aws_security_group" "analytics_daily_lambda" {
   name        = "${var.service}-${var.env}-lambda-access"
   description = "Security group attached to Avrae analytics lambda"
