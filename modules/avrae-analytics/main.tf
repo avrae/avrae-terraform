@@ -214,3 +214,86 @@ resource "aws_iam_role_policy_attachment" "analytics_glue_service_attachment" {
   role       = aws_iam_role.analytics_glue_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
 }
+
+# ==== LAMBDA ====
+# function created manually
+
+resource "aws_iam_role" "analytics_lambda_role" {
+  name = "${var.service}-${var.env}-analytics-lambda"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+
+  tags = merge(
+    local.common_tags,
+    {
+      "Name" = "${var.common_name} Lambda Role"
+    },
+  )
+}
+
+resource "aws_iam_policy" "analytics_lambda_policy" {
+  name = "${var.service}-${var.env}-analytics-lambda-policy"
+  path        = "/"
+  description = "Used to give SecretsManager access to Lambda to get database credentials"
+
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:DescribeSecret",
+                "secretsmanager:List*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "secretsmanager:Get*",
+            "Resource": [
+                "${var.mongo_url_secret_arn}"
+            ]
+        }
+    ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "analytics_lambda_attachment" {
+  role       = aws_iam_role.analytics_lambda_role.name
+  policy_arn = aws_iam_policy.analytics_lambda_policy.arn
+}
+
+resource "aws_security_group" "analytics_daily_lambda" {
+  name        = "${var.service}-${var.env}-lambda-access"
+  description = "Security group attached to Avrae analytics lambda"
+  vpc_id      = var.vpc_id
+  tags = {
+    Name = "${var.service}-${var.env} Lambda Access"
+    env  = var.env
+  }
+}
+
+resource "aws_security_group_rule" "analytics_lambda_egress" {
+  type              = "egress"
+  protocol          = "-1"
+  from_port         = 0
+  to_port           = 0
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.analytics_daily_lambda.id
+}

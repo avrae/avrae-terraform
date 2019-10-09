@@ -26,3 +26,7 @@ variable "s3_prefix" {
 variable "vpc_id" {
   description = "ID of the VPC"
 }
+
+variable "mongo_url_secret_arn" {
+  description = "ARN of SecretsManager secret for Mongo"
+}
