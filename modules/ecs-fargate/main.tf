@@ -95,7 +95,7 @@ EOF
 
 }
 
-resource "aws_iam_role_policy_attachment" "service_deploy_policy_attach" {
+resource "aws_iam_role_policy_attachment" "role_policy_attach2" {
   policy_arn = aws_iam_policy.list_tasks_policy.arn
   role = aws_iam_role.ecs_service_role.name
 }
