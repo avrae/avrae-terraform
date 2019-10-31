@@ -71,6 +71,35 @@ resource "aws_iam_role_policy_attachment" "role_policy_attach" {
   policy_arn = element(var.ecs_role_policy_arns, count.index)
 }
 
+resource "aws_iam_policy" "list_tasks_policy" {
+  name        = "${var.service}-${var.env}-task-policy"
+  path        = "/"
+  description = "Used to give access to ECS task metadata to running tasks"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+   {
+     "Effect": "Allow",
+     "Action": [
+       "ecs:ListTasks"
+     ],
+     "Resource": [
+       "*"
+     ]
+   }
+  ]
+}
+EOF
+
+}
+
+resource "aws_iam_role_policy_attachment" "service_deploy_policy_attach" {
+  policy_arn = aws_iam_policy.list_tasks_policy.arn
+  role = aws_iam_role.ecs_service_role.name
+}
+
 resource "aws_ecs_task_definition" "service_task_definition" {
   family = "${var.service}-ecs-task-definition"
   network_mode = "awsvpc"
