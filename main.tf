@@ -361,6 +361,10 @@ module "avrae_bot_ecs" {
       name = "NEW_RELIC_ENVIRONMENT"
       value  = "production"
     },
+    {
+      name = "NUM_CLUSTERS"
+      value  = "1"
+    },
   ]
   secrets = [
     {
@@ -400,7 +404,7 @@ module "avrae_bot_ecs" {
   # restart container instantly on deploy
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
-  instance_count                     = 1
+  instance_count                     = 1  # MUST EQUAL NUM_CLUSTERS ENV VAR!
   max_instance_count                 = 1
 
   # 2 vCPUs, 12GB RAM
@@ -467,6 +471,14 @@ module "avrae_bot_nightly_ecs" {
       name = "DEFAULT_PREFIX"
       value  = "$"
     },
+    {
+      name = "NUM_CLUSTERS"
+      value  = "1"
+    },
+    {
+      name = "NUM_SHARDS"  # explicitly set num shards for clustering test
+      value  = "2"
+    },
   ]
   secrets = [
     {
@@ -502,7 +514,7 @@ module "avrae_bot_nightly_ecs" {
   # restart container instantly on deploy
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
-  instance_count                     = 1
+  instance_count                     = 1  # MUST EQUAL NUM_CLUSTERS ENV VAR!
   max_instance_count                 = 1
 
   # 1 vCPU, 4GB RAM
