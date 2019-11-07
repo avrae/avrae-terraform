@@ -363,7 +363,7 @@ module "avrae_bot_ecs" {
     },
     {
       name = "NUM_CLUSTERS"
-      value  = "1"
+      value  = "3"
     },
   ]
   secrets = [
@@ -404,12 +404,12 @@ module "avrae_bot_ecs" {
   # restart container instantly on deploy
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
-  instance_count                     = 1  # MUST EQUAL NUM_CLUSTERS ENV VAR!
-  max_instance_count                 = 1
+  instance_count                     = 3  # MUST EQUAL NUM_CLUSTERS ENV VAR!
+  max_instance_count                 = 3
 
-  # 2 vCPUs, 12GB RAM
-  fargate_cpu    = 2048
-  fargate_memory = 12288
+  # 1 vCPU, 8GB RAM per cluster
+  fargate_cpu    = 1024
+  fargate_memory = 8192
 }
 
 # ECS Fargate - Avrae Nightly - Service
