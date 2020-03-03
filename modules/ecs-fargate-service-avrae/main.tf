@@ -102,14 +102,7 @@ resource "aws_ecs_task_definition" "service_task_definition" {
         }
     },
     "environment": ${jsonencode(var.environment_variables)},
-    "secrets": ${jsonencode(var.secrets)},
-    "ulimits": [
-      {
-        "name": "nofile",
-        "softLimit": 4096,
-        "hardLimit": 8192
-      }
-    ]
+    "secrets": ${jsonencode(var.secrets)}
   }
 ]
 DEFINITION
