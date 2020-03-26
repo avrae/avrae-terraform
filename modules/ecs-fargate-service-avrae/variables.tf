@@ -106,3 +106,7 @@ variable "deployment_maximum_percent" {
   default     = 200
 }
 
+variable "entitlements_dynamo_table_prefix" {
+  description = "Prefix of the tables to grant DynamoDB read access to."
+  type        = string
+}

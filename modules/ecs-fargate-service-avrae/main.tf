@@ -35,12 +35,14 @@ EOF
   )
 }
 
+# attach policies from vars
 resource "aws_iam_role_policy_attachment" "role_policy_attach" {
   count = length(var.ecs_role_policy_arns)
   role = aws_iam_role.ecs_service_role.name
   policy_arn = element(var.ecs_role_policy_arns, count.index)
 }
 
+# IAM ECS Metadata
 resource "aws_iam_policy" "list_tasks_policy" {
   name        = "${var.service}-${var.env}-task-policy"
   path        = "/"
@@ -70,6 +72,37 @@ resource "aws_iam_role_policy_attachment" "role_policy_attach2" {
   role = aws_iam_role.ecs_service_role.name
 }
 
+# IAM DynamoDB Read
+resource "aws_iam_policy" "dynamo_iam_policy" {
+  name        = "avrae-dynamo-policy-${var.env}"
+  path        = "/"
+  description = "Policy limiting dynamo access for Avrae"
+  policy      = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:GetItem",
+                "dynamodb:Query"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:*:*:table/${var.entitlements_dynamo_table_prefix}*"
+            ]
+        }
+    ]
+}
+EOF
+
+}
+
+resource "aws_iam_role_policy_attachment" "role_policy_attach3" {
+  policy_arn = aws_iam_policy.dynamo_iam_policy.arn
+  role = aws_iam_role.ecs_service_role.name
+}
+
+# service task def'n
 resource "aws_ecs_task_definition" "service_task_definition" {
   family = "${var.service}-ecs-task-definition"
   network_mode = "awsvpc"
