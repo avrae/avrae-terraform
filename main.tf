@@ -363,7 +363,7 @@ module "avrae_bot_ecs" {
     },
     {
       name = "NUM_CLUSTERS"
-      value  = "3"
+      value  = "6"
     },
   ]
   secrets = [
@@ -404,8 +404,8 @@ module "avrae_bot_ecs" {
   # restart container instantly on deploy
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
-  instance_count                     = 3  # MUST EQUAL NUM_CLUSTERS ENV VAR!
-  max_instance_count                 = 3
+  instance_count                     = 6  # MUST EQUAL NUM_CLUSTERS ENV VAR!
+  max_instance_count                 = 6
 
   # 1 vCPU, 8GB RAM per cluster
   fargate_cpu    = 1024
