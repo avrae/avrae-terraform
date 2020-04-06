@@ -39,11 +39,6 @@ variable "instance_count" {
   default     = 1
 }
 
-variable "max_instance_count" {
-  description = "Defines maximum number of instance tasks to scale up to."
-  default     = 4
-}
-
 variable "cluster_name" {
   description = "Name of the ECS Cluster"
   default     = "default-cluster"

@@ -207,7 +207,6 @@ module "taine_ecs" {
   service_port       = 8378
   health_check       = "/github"
   instance_count     = 1
-  max_instance_count = 1
 
   # restart container instantly on deploy
   deployment_minimum_healthy_percent = 0
@@ -405,7 +404,6 @@ module "avrae_bot_ecs" {
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
   instance_count                     = 6  # MUST EQUAL NUM_CLUSTERS ENV VAR!
-  max_instance_count                 = 6
 
   # 1 vCPU, 8GB RAM per cluster
   fargate_cpu    = 1024
@@ -515,7 +513,6 @@ module "avrae_bot_nightly_ecs" {
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
   instance_count                     = 1  # MUST EQUAL NUM_CLUSTERS ENV VAR!
-  max_instance_count                 = 1
 
   # 1 vCPU, 4GB RAM
   fargate_cpu    = 1024
@@ -735,7 +732,6 @@ module "avrae_io_ecs" {
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 150
   instance_count                     = 2
-  max_instance_count                 = 2
 
   # 1 vCPU, 2GB RAM per container
   fargate_cpu    = 1024
