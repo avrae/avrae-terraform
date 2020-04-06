@@ -731,9 +731,9 @@ module "avrae_io_ecs" {
     "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
   ]
 
-  # restart container instantly on deploy
-  deployment_minimum_healthy_percent = 0
-  deployment_maximum_percent         = 100
+  # always have 1-3 containers running
+  deployment_minimum_healthy_percent = 50
+  deployment_maximum_percent         = 150
   instance_count                     = 2
   max_instance_count                 = 2
 
