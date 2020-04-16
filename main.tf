@@ -113,10 +113,8 @@ resource "aws_secretsmanager_secret" "avrae_bot_nightly_discord_token" {
 }
 
 # Secrets Manager Secret - Auth Service Secret
-resource "aws_secretsmanager_secret" "auth_service_secret" {
-  name        = "avrae/${var.env}/auth-service-secret"
-  description = "Shared secret for hitting the DDB Auth Service."
-  tags        = local.common_tags
+data "aws_secretsmanager_secret" "avrae_auth_service_secret" {
+  name = "avrae/${var.env}/auth-service-secret"
 }
 
 # ECR - Taine
@@ -420,7 +418,7 @@ module "avrae_bot_ecs" {
     },
     {
       name      = "DDB_AUTH_SECRET"
-      valueFrom = aws_secretsmanager_secret.auth_service_secret.arn
+      valueFrom = data.aws_secretsmanager_secret.avrae_auth_service_secret.arn
     },
   ]
 
@@ -549,7 +547,7 @@ module "avrae_bot_nightly_ecs" {
     },
     {
       name      = "DDB_AUTH_SECRET"
-      valueFrom = aws_secretsmanager_secret.auth_service_secret.arn
+      valueFrom = data.aws_secretsmanager_secret.avrae_auth_service_secret.arn
     },
   ]
 
