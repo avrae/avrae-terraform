@@ -60,3 +60,19 @@ variable "s3_prefix" {
   description = "Used as a common prefix for service S3 buckets"
 }
 
+variable "entitlements_user_dynamo_table" {
+  description = "The name of the DynamoDB user entitlement table to grant Avrae read access to"
+}
+
+variable "entitlements_entity_dynamo_table" {
+  description = "The name of the DynamoDB entity entitlement table to grant Avrae read access to"
+}
+
+variable "entitlements_dynamo_table_prefix" {
+  description = "Prefix of the tables to grant DynamoDB read access to."
+  type        = string
+}
+
+variable "auth_service_url" {
+  description = "URL of the auth service endpoint to hit."
+}

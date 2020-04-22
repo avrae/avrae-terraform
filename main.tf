@@ -112,6 +112,11 @@ resource "aws_secretsmanager_secret" "avrae_bot_nightly_discord_token" {
   tags        = local.common_tags
 }
 
+# Secrets Manager Secret - Auth Service Secret
+data "aws_secretsmanager_secret" "avrae_auth_service_secret" {
+  name = "avrae/${var.env}/auth-service-secret"
+}
+
 # ECR - Taine
 module "ecr_taine" {
   source  = "app.terraform.io/Fandom/ecr/aws"
@@ -365,6 +370,18 @@ module "avrae_bot_ecs" {
       name = "NUM_CLUSTERS"
       value  = "6"
     },
+    {
+      name = "DDB_AUTH_SERVICE_URL"
+      value  = var.auth_service_url
+    },
+    {
+      name = "DYNAMO_USER_TABLE"
+      value  = var.entitlements_user_dynamo_table
+    },
+    {
+      name = "DYNAMO_ENTITY_TABLE"
+      value  = var.entitlements_entity_dynamo_table
+    },
   ]
   secrets = [
     {
@@ -399,6 +416,10 @@ module "avrae_bot_ecs" {
       name      = "NEW_RELIC_LICENSE_KEY"
       valueFrom = aws_secretsmanager_secret.new_relic_license_key.arn
     },
+    {
+      name      = "DDB_AUTH_SECRET"
+      valueFrom = data.aws_secretsmanager_secret.avrae_auth_service_secret.arn
+    },
   ]
 
   # restart container instantly on deploy
@@ -410,6 +431,9 @@ module "avrae_bot_ecs" {
   # 1 vCPU, 8GB RAM per cluster
   fargate_cpu    = 1024
   fargate_memory = 8192
+
+  # entitlements Dynamo table names
+  entitlements_dynamo_table_prefix = var.entitlements_dynamo_table_prefix
 }
 
 # ECS Fargate - Avrae Nightly - Service
@@ -479,6 +503,18 @@ module "avrae_bot_nightly_ecs" {
       name = "NUM_SHARDS"  # explicitly set num shards for clustering test
       value  = "2"
     },
+    {
+      name = "DDB_AUTH_SERVICE_URL"
+      value  = var.auth_service_url
+    },
+    {
+      name = "DYNAMO_USER_TABLE"
+      value  = var.entitlements_user_dynamo_table
+    },
+    {
+      name = "DYNAMO_ENTITY_TABLE"
+      value  = var.entitlements_entity_dynamo_table
+    },
   ]
   secrets = [
     {
@@ -509,6 +545,10 @@ module "avrae_bot_nightly_ecs" {
       name      = "NEW_RELIC_LICENSE_KEY"
       valueFrom = aws_secretsmanager_secret.new_relic_license_key.arn
     },
+    {
+      name      = "DDB_AUTH_SECRET"
+      valueFrom = data.aws_secretsmanager_secret.avrae_auth_service_secret.arn
+    },
   ]
 
   # restart container instantly on deploy
@@ -520,6 +560,9 @@ module "avrae_bot_nightly_ecs" {
   # 1 vCPU, 4GB RAM
   fargate_cpu    = 1024
   fargate_memory = 4096
+
+  # entitlements Dynamo table names
+  entitlements_dynamo_table_prefix = var.entitlements_dynamo_table_prefix
 }
 
 # listeners
