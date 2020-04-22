@@ -24,7 +24,8 @@ resource "aws_iam_policy" "service_deploy_policy" {
      "Resource": [
        "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/taine",
        "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/avrae-bot",
-       "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/avrae-service"
+       "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/avrae-service",
+       "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/avrae-io"
      ]
    },
    {

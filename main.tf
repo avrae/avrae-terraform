@@ -368,7 +368,7 @@ module "avrae_bot_ecs" {
     },
     {
       name = "NUM_CLUSTERS"
-      value  = "3"
+      value  = "6"
     },
     {
       name = "DDB_AUTH_SERVICE_URL"
@@ -425,8 +425,8 @@ module "avrae_bot_ecs" {
   # restart container instantly on deploy
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
-  instance_count                     = 3  # MUST EQUAL NUM_CLUSTERS ENV VAR!
-  max_instance_count                 = 3
+  instance_count                     = 6  # MUST EQUAL NUM_CLUSTERS ENV VAR!
+  max_instance_count                 = 6
 
   # 1 vCPU, 8GB RAM per cluster
   fargate_cpu    = 1024
@@ -735,4 +735,67 @@ module "analytics_avrae" {
   s3_prefix        = var.s3_prefix
   vpc_id           = module.ecs_vpc.aws_vpc_main_id
   mongo_url_secret_arn = aws_secretsmanager_secret.mongo_url.arn
+}
+
+# ECR - Avrae.io
+module "ecr_avrae_io" {
+  source  = "app.terraform.io/Fandom/ecr/aws"
+  version = "1.12.2"
+
+  env      = var.env
+  service  = var.service
+  group    = var.group
+  ecr_name = "avrae/avrae-io"
+}
+
+# ECS Fargate - Avrae io - Service
+module "avrae_io_ecs" {
+  source          = "./modules/ecs-fargate"
+  private_subnets = module.ecs_vpc.private_subnet_ids
+  public_subnets  = module.ecs_vpc.public_subnet_ids
+  aws_lb_id       = module.ecs_avrae.lb_external_listener
+  lb_sg_id        = module.ecs_avrae.lb_sg_id
+  region          = var.region
+  service         = "avrae-io"
+  service_name    = "avrae-io"
+  service_port    = 4000
+  account_id      = var.account_id
+  vpc_id          = module.ecs_vpc.aws_vpc_main_id
+  cluster_id      = module.ecs_avrae.cluster_id
+
+  common_name  = "Avrae io"
+  cluster_name = "${var.service}-${var.env}"
+  env          = var.env
+  group        = var.group
+  certificate_domain = var.cert_domain
+  docker_image = "${var.account_id}.dkr.ecr.us-east-1.amazonaws.com/avrae/avrae-io:live"
+  ecs_role_policy_arns = [
+    "arn:aws:iam::aws:policy/CloudWatchFullAccess",
+    "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy",
+  ]
+
+  # always have 1-3 containers running
+  deployment_minimum_healthy_percent = 50
+  deployment_maximum_percent         = 150
+  instance_count                     = 2
+  max_instance_count                 = 2
+
+  # 1 vCPU, 2GB RAM per container
+  fargate_cpu    = 1024
+  fargate_memory = 2048
+}
+
+resource "aws_lb_listener_rule" "avrae_io_https" {
+  listener_arn = aws_lb_listener.front_end_https.arn
+
+  action {
+    type             = "forward"
+    target_group_arn = module.avrae_io_ecs.target_group_id
+  }
+
+  condition {
+    host_header {
+      values = ["avrae.io","www.avrae.io"]
+    }
+  }
 }
