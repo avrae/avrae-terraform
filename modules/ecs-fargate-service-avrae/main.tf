@@ -74,7 +74,7 @@ resource "aws_iam_role_policy_attachment" "role_policy_attach2" {
 
 # IAM DynamoDB Read
 resource "aws_iam_policy" "dynamo_iam_policy" {
-  name        = "avrae-dynamo-policy-${var.env}"
+  name        = "${var.service}-dynamo-policy-${var.env}"
   path        = "/"
   description = "Policy limiting dynamo access for Avrae"
   policy      = <<EOF
