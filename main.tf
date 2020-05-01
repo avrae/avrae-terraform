@@ -118,7 +118,7 @@ data "aws_secretsmanager_secret" "avrae_auth_service_secret" {
 }
 
 # Secrets Manager Secret - Waterdeep JWT Key
-data "aws_secretsmanager_secret" "avrae_waterdeep_jwt_secret" {
+data "aws_secretsmanager_secret" "waterdeep_jwt_secret" {
   name = "${var.env}/shared/waterdeep-jwt-key"
 }
 
@@ -437,7 +437,7 @@ module "avrae_bot_ecs" {
     },
     {
       name      = "DDB_AUTH_WATERDEEP_SECRET"
-      valueFrom = data.aws_secretsmanager_secret.avrae_waterdeep_jwt_secret.arn
+      valueFrom = data.aws_secretsmanager_secret.waterdeep_jwt_secret.arn
     },
     {
       name      = "LAUNCHDARKLY_SDK_KEY"
@@ -574,7 +574,7 @@ module "avrae_bot_nightly_ecs" {
     },
     {
       name      = "DDB_AUTH_WATERDEEP_SECRET"
-      valueFrom = data.aws_secretsmanager_secret.avrae_waterdeep_jwt_secret.arn
+      valueFrom = data.aws_secretsmanager_secret.waterdeep_jwt_secret.arn
     },
     {
       name      = "LAUNCHDARKLY_SDK_KEY"
