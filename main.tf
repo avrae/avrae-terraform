@@ -117,6 +117,11 @@ data "aws_secretsmanager_secret" "avrae_auth_service_secret" {
   name = "avrae/${var.env}/auth-service-secret"
 }
 
+# Secrets Manager Secret - Waterdeep JWT Key
+data "aws_secretsmanager_secret" "avrae_waterdeep_jwt_secret" {
+  name = "${var.env}/shared/waterdeep-jwt-key"
+}
+
 # Secrets Manager Secret - LaunchDarkly SDK Key (Prod)
 data "aws_secretsmanager_secret" "avrae_bot_ld_sdk_key" {
   name        = "avrae/${var.env}/avrae-bot-ld-sdk-key"
@@ -431,6 +436,10 @@ module "avrae_bot_ecs" {
       valueFrom = data.aws_secretsmanager_secret.avrae_auth_service_secret.arn
     },
     {
+      name      = "DDB_AUTH_WATERDEEP_SECRET"
+      valueFrom = data.aws_secretsmanager_secret.avrae_waterdeep_jwt_secret.arn
+    },
+    {
       name      = "LAUNCHDARKLY_SDK_KEY"
       valueFrom = data.aws_secretsmanager_secret.avrae_bot_ld_sdk_key.arn
     },
@@ -562,6 +571,10 @@ module "avrae_bot_nightly_ecs" {
     {
       name      = "DDB_AUTH_SECRET"
       valueFrom = data.aws_secretsmanager_secret.avrae_auth_service_secret.arn
+    },
+    {
+      name      = "DDB_AUTH_WATERDEEP_SECRET"
+      valueFrom = data.aws_secretsmanager_secret.avrae_waterdeep_jwt_secret.arn
     },
     {
       name      = "LAUNCHDARKLY_SDK_KEY"
