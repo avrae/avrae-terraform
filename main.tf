@@ -538,10 +538,10 @@ module "avrae_bot_nightly_ecs" {
       name = "DYNAMO_ENTITY_TABLE"
       value  = var.entitlements_entity_dynamo_table
     },
-//    {
-//      name = "CHARACTER_COMPUTATION_ENDPOINT"
-//      value  = module.character_computation_api.api_endpoint
-//    },
+    {
+      name = "CHARACTER_COMPUTATION_ENDPOINT"
+      value  = module.character_computation_api.api_endpoint
+    },
   ]
   secrets = [
     {
