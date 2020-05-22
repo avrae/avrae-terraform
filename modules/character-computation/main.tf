@@ -62,5 +62,30 @@ resource "aws_api_gateway_rest_api" "character_computation_api" {
     types = ["PRIVATE"]
     vpc_endpoint_ids = [aws_vpc_endpoint.api.id]
   }
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Deny",
+            "Principal": "*",
+            "Action": "execute-api:Invoke",
+            "Resource": "execute-api:/*/*/*",
+            "Condition": {
+                "StringNotEquals": {
+                    "aws:sourceVpc": "${var.vpc_id}"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "execute-api:Invoke",
+            "Resource": "execute-api:/*/*/*"
+        }
+    ]
+}
+EOF
 }
 
