@@ -538,6 +538,10 @@ module "avrae_bot_nightly_ecs" {
       name = "DYNAMO_ENTITY_TABLE"
       value  = var.entitlements_entity_dynamo_table
     },
+    {
+      name = "CHARACTER_COMPUTATION_ENDPOINT"
+      value  = module.character_computation_api.api_endpoint
+    },
   ]
   secrets = [
     {
@@ -831,3 +835,11 @@ resource "aws_lb_listener_rule" "avrae_io_https" {
   }
 }
 
+module "character_computation_api" {
+  source        = "./modules/character-computation"
+  env           = var.env
+  service       = var.service
+  subnet_ids    = module.ecs_vpc.private_subnet_ids
+  vpc_id        = module.ecs_vpc.aws_vpc_main_id
+  whitelist_sgs = [module.avrae_bot_ecs.security_group_id, module.avrae_bot_nightly_ecs.security_group_id]
+}
