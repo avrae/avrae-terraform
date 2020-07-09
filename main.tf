@@ -77,6 +77,13 @@ resource "aws_secretsmanager_secret" "avrae_bot_discord_token" {
   tags        = local.common_tags
 }
 
+# Secrets Manager Secret - Avrae Discord Client Secret
+resource "aws_secretsmanager_secret" "avrae_discord_client_secret" {
+  name        = "avrae/${var.env}/avrae-discord-client-secret"
+  description = "Discord client secret for the Avrae application."
+  tags        = local.common_tags
+}
+
 # Secrets Manager Secret - Avrae Dicecloud Password
 resource "aws_secretsmanager_secret" "avrae_bot_dicecloud_pass" {
   name        = "avrae/${var.env}/avrae-bot-dicecloud-pass"
@@ -109,6 +116,13 @@ resource "aws_secretsmanager_secret" "avrae_bot_google_service" {
 resource "aws_secretsmanager_secret" "avrae_bot_nightly_discord_token" {
   name        = "avrae/${var.env}/avrae-bot-nightly-discord-token"
   description = "Discord token for the Avrae Bot."
+  tags        = local.common_tags
+}
+
+# Secrets Manager Secret - Avrae Service JWT Secret
+resource "aws_secretsmanager_secret" "avrae_service_jwt_secret" {
+  name        = "avrae/${var.env}/avrae-service-jwt-secret"
+  description = "JWT secret for tokens issues to avrae.io from the avrae service."
   tags        = local.common_tags
 }
 
@@ -321,6 +335,10 @@ module "avrae_service_ecs" {
       name = "REDIS_URL"
       value  = "redis://${module.redis_avrae.hostname}"
     },
+    {
+      name = "DISCORD_CLIENT_ID"
+      value  = var.discord_client_id
+    },
   ]
   secrets = [
     {
@@ -334,6 +352,14 @@ module "avrae_service_ecs" {
     {
       name      = "SENTRY_DSN"
       valueFrom = aws_secretsmanager_secret.avrae_service_sentry_dsn.arn
+    },
+    {
+      name      = "DISCORD_CLIENT_SECRET"
+      valueFrom = aws_secretsmanager_secret.avrae_discord_client_secret.arn
+    },
+    {
+      name      = "JWT_SECRET"
+      valueFrom = aws_secretsmanager_secret.avrae_service_jwt_secret.arn
     },
   ]
 }
