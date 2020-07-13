@@ -873,3 +873,4 @@ module "character_computation_api" {
   vpc_id        = module.ecs_vpc.aws_vpc_main_id
   whitelist_sgs = [module.avrae_bot_ecs.security_group_id, module.avrae_bot_nightly_ecs.security_group_id]
 }
+
