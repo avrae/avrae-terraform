@@ -34,6 +34,10 @@ variable "discord_owner_id" {
   description = "Discord User ID of the owner of the Avrae bot"
 }
 
+variable "discord_client_id" {
+  description = "Discord Client ID of the Avrae application"
+}
+
 variable "dicecloud_username" {
   description = "Dicecloud username of the Avrae bot"
 }
