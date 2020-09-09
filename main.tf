@@ -669,8 +669,9 @@ resource "aws_lb_listener_rule" "taine_ecs" {
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/github*"]
+    path_pattern {
+      values = ["/github*"]
+    }
   }
 }
 
@@ -683,8 +684,9 @@ resource "aws_lb_listener_rule" "taine_ecs_https" {
   }
 
   condition {
-    field  = "path-pattern"
-    values = ["/github*"]
+    path_pattern {
+      values = ["/github*"]
+    }
   }
 }
 
