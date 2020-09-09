@@ -361,6 +361,10 @@ module "avrae_service_ecs" {
       name      = "JWT_SECRET"
       valueFrom = aws_secretsmanager_secret.avrae_service_jwt_secret.arn
     },
+    {
+      name      = "DISCORD_BOT_TOKEN"
+      valueFrom = aws_secretsmanager_secret.avrae_bot_discord_token.arn
+    },
   ]
 }
 
