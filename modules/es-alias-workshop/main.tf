@@ -22,6 +22,7 @@ resource "aws_elasticsearch_domain" "workshop_es" {
 
   cluster_config {
     instance_type = "r5.large.elasticsearch"
+    zone_awareness_enabled = true
   }
 
   vpc_options {
