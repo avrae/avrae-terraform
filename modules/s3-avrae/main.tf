@@ -21,8 +21,8 @@ resource "aws_s3_bucket" "monster_tokens" {
       "Principal": "*",
       "Action": "s3:GetObject",
       "Effect": "Allow",
-      "Resource": ["arn:aws:s3:::${aws_s3_bucket.monster_tokens.arn}",
-                   "arn:aws:s3:::${aws_s3_bucket.monster_tokens.arn}/*"],
+      "Resource": ["arn:aws:s3:::${var.s3_prefix}-${var.region}-${var.service}-${var.env}-monster-tokens",
+                   "arn:aws:s3:::${var.s3_prefix}-${var.region}-${var.service}-${var.env}-monster-tokens/*"],
       "Condition": {
         "StringEquals": {
           "aws:SourceVpc": "${var.vpc_id}"
