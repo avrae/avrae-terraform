@@ -20,7 +20,7 @@ resource "aws_iam_service_linked_role" "es" {
 
 # ---- elasticsearch domain ----
 resource "aws_elasticsearch_domain" "workshop_es" {
-  domain_name = "${var.service}-${var.env}-workshop-collections"
+  domain_name = "${var.service}-${var.env}-workshop"
 
   elasticsearch_version = "7.7"
 
@@ -41,7 +41,7 @@ resource "aws_elasticsearch_domain" "workshop_es" {
             "Action": "es:*",
             "Principal": "*",
             "Effect": "Allow",
-            "Resource": "arn:aws:es:*:*:domain/${var.service}-${var.env}-workshop-collections/*"
+            "Resource": "arn:aws:es:*:*:domain/${var.service}-${var.env}-workshop/*"
         }
     ]
 }
