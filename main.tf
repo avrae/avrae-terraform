@@ -339,6 +339,10 @@ module "avrae_service_ecs" {
       name = "DISCORD_CLIENT_ID"
       value  = var.discord_client_id
     },
+    {
+      name = "ELASTICSEARCH_ENDPOINT"
+      value  = module.alias_workshop_elasticsearch.es_endpoint
+    },
   ]
   secrets = [
     {
@@ -880,6 +884,15 @@ module "character_computation_api" {
   whitelist_sgs = [module.avrae_bot_ecs.security_group_id, module.avrae_bot_nightly_ecs.security_group_id]
 }
 
+module "alias_workshop_elasticsearch" {
+  source = "./modules/es-alias-workshop"
+  env               = var.env
+  service           = var.service
+  subnet_ids        = module.ecs_vpc.private_subnet_ids
+  vpc_id            = module.ecs_vpc.aws_vpc_main_id
+  es_whitelist_sgs  = [module.avrae_bot_ecs.security_group_id, module.avrae_bot_nightly_ecs.security_group_id, module.avrae_service_ecs.security_group_id]
+}
+    
 module "s3_avrae" {
   source        = "./modules/s3-avrae"
   env           = var.env
