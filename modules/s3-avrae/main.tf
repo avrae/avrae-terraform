@@ -19,12 +19,12 @@ resource "aws_s3_bucket" "monster_tokens" {
     {
       "Sid": "avrae-vpc-access",
       "Principal": "*",
-      "Action": "s3:GetObject",
-      "Effect": "Allow",
+      "Action": "s3:*",
+      "Effect": "Deny",
       "Resource": ["arn:aws:s3:::${var.s3_prefix}-${var.region}-${var.service}-${var.env}-monster-tokens",
                    "arn:aws:s3:::${var.s3_prefix}-${var.region}-${var.service}-${var.env}-monster-tokens/*"],
       "Condition": {
-        "StringEquals": {
+        "StringNotEquals": {
           "aws:SourceVpc": "${var.vpc_id}"
         }
       }
