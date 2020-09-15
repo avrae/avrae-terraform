@@ -60,11 +60,11 @@ resource "aws_security_group" "tokens_s3" {
   }
 }
 
-# VPC: S3 interface endpoint
+# VPC: S3 gateway endpoint
 resource "aws_vpc_endpoint" "s3" {
   vpc_id = var.vpc_id
   service_name = "com.amazonaws.${var.region}.s3"
-  vpc_endpoint_type = "Interface"
+  vpc_endpoint_type = "Gateway"
 
   security_group_ids = [
     aws_security_group.tokens_s3.id,
