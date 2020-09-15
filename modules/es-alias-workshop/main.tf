@@ -41,7 +41,7 @@ resource "aws_elasticsearch_domain" "workshop_es" {
             "Action": "es:*",
             "Principal": "*",
             "Effect": "Allow",
-            "Resource": "arn:aws:es:*:*:domain/${aws_elasticsearch_domain.workshop_es.domain_name}/*"
+            "Resource": "arn:aws:es:*:*:domain/${var.service}-${var.env}-workshop-collections/*"
         }
     ]
 }
