@@ -42,20 +42,19 @@ POLICY
 }
 
 # ==== VPC ====
+# VPC: avrae route tables
+data "aws_route_tables" "avrae_route_tables" {
+  vpc_id = var.vpc_id
+
+  filter {
+    name = "association.subnet-id"
+    values = var.subnet_ids
+  }
+}
+
 # VPC: S3 gateway endpoint
 resource "aws_vpc_endpoint" "s3" {
   vpc_id = var.vpc_id
   service_name = "com.amazonaws.${var.region}.s3"
-}
-
-# VPC: route table routes to S3
-data "aws_route_table" "avrae_subnet_route_table" {
-  for_each = var.subnet_ids
-  subnet_id = each.value
-}
-
-# VPC endpoint -> route table association
-resource "aws_vpc_endpoint_route_table_association" "avrae_s3_route_table_assoc" {
-  route_table_id = data.aws_route_table.avrae_subnet_route_table.id
-  vpc_endpoint_id = aws_vpc_endpoint.s3.id
+  route_table_ids = data.aws_route_tables.avrae_route_tables.ids
 }
