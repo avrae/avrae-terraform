@@ -14,10 +14,6 @@ resource "aws_security_group" "es" {
   }
 }
 
-resource "aws_iam_service_linked_role" "es" {
-  aws_service_name = "es.amazonaws.com"
-}
-
 # ---- elasticsearch domain ----
 resource "aws_elasticsearch_domain" "workshop_es" {
   domain_name = "${var.service}-${var.env}-workshop"
@@ -56,7 +52,5 @@ CONFIG
     Component = var.service
     Environment = var.env
   }
-
-  depends_on = [aws_iam_service_linked_role.es]
 }
 
