@@ -880,3 +880,12 @@ module "character_computation_api" {
   whitelist_sgs = [module.avrae_bot_ecs.security_group_id, module.avrae_bot_nightly_ecs.security_group_id]
 }
 
+module "s3_avrae" {
+  source        = "./modules/s3-avrae"
+  env           = var.env
+  service       = var.service
+  region        = var.region
+  vpc_id        = module.ecs_vpc.aws_vpc_main_id
+  s3_prefix     = var.s3_prefix
+  whitelist_sgs = [module.avrae_bot_ecs.security_group_id, module.avrae_bot_nightly_ecs.security_group_id]
+}
