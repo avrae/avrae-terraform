@@ -22,6 +22,7 @@ resource "aws_elasticsearch_domain" "workshop_es" {
 
   cluster_config {
     instance_type = "r5.large.elasticsearch"
+    instance_count = 2
     zone_awareness_enabled = true
   }
 
