@@ -42,33 +42,8 @@ POLICY
 }
 
 # ==== VPC ====
-# Security Group: S3 Endpoint
-resource "aws_security_group" "tokens_s3" {
-  name = "${var.service}-${var.env}-s3-access"
-  description = "Security group attached to Avrae S3 gateway endpoint"
-  vpc_id = var.vpc_id
-  tags = {
-    Name = "${var.service}-${var.env} S3 Gateway Endpoint Access"
-    env = var.env
-  }
-
-  ingress {
-    from_port = 443
-    to_port = 443
-    protocol = "tcp"
-    security_groups = var.whitelist_sgs
-  }
-}
-
 # VPC: S3 gateway endpoint
 resource "aws_vpc_endpoint" "s3" {
   vpc_id = var.vpc_id
   service_name = "com.amazonaws.${var.region}.s3"
-  vpc_endpoint_type = "Gateway"
-
-  security_group_ids = [
-    aws_security_group.tokens_s3.id,
-  ]
-
-  private_dns_enabled = true
 }

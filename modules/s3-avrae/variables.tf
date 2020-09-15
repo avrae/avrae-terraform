@@ -17,9 +17,3 @@ variable "vpc_id" {
 variable "s3_prefix" {
   description = "S3 bucket prefix"
 }
-
-variable "whitelist_sgs" {
-  type        = list(string)
-  description = "List of security groups to whitelist S3 access from."
-  default     = []
-}
