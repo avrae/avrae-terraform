@@ -887,4 +887,5 @@ module "s3_avrae" {
   region        = var.region
   vpc_id        = module.ecs_vpc.aws_vpc_main_id
   s3_prefix     = var.s3_prefix
+  subnet_ids    = module.ecs_vpc.private_subnet_ids
 }
