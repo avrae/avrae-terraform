@@ -435,10 +435,10 @@ module "avrae_bot_ecs" {
       name = "CHARACTER_COMPUTATION_ENDPOINT"
       value  = module.character_computation_api.api_endpoint
     },
-    {
-      name = "MONSTER_TOKEN_ENDPOINT"
-      value = module.s3_avrae.token_s3_endpoint
-    },
+//    {
+//      name = "MONSTER_TOKEN_ENDPOINT"
+//      value = module.s3_avrae.token_s3_endpoint
+//    },
   ]
   secrets = [
     {
