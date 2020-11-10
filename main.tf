@@ -187,6 +187,7 @@ module "iam_deploy" {
   service    = var.service
   region     = var.region
   account_id = var.account_id
+  s3_prefix  = var.s3_prefix
 }
 
 # DynamoDB
