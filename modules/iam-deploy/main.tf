@@ -58,6 +58,16 @@ resource "aws_iam_policy" "service_deploy_policy" {
       ],
       "Resource": [
         "arn:aws:s3:::media.avrae.io*",
+        "arn:aws:s3:::${var.s3_prefix}-${var.region}-${var.service}-${var.env}*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "lambda:UpdateFunctionCode"
+      ],
+      "Resource": [
+        "arn:aws:lambda:${var.region}:${var.account_id}:function:${var.service}-${var.env}*"
       ]
     }
   ]
