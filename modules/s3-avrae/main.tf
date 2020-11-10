@@ -41,6 +41,17 @@ POLICY
   )
 }
 
+# lambda pre-deploy bucket
+resource "aws_s3_bucket" "lambda_archives" {
+  bucket = "${var.s3_prefix}-${var.region}-${var.service}-${var.env}-lambda-archives"
+  acl = "private"
+  tags = merge(
+  local.common_tags,
+  {
+    "Name" = "${var.service}-lambda-archives"
+  })
+}
+
 # ==== VPC ====
 # VPC: avrae route tables
 data "aws_route_tables" "avrae_route_tables" {
