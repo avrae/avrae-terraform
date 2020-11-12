@@ -54,7 +54,8 @@ resource "aws_iam_policy" "service_deploy_policy" {
         "s3:PutObject",
         "s3:PutObjectTagging",
         "s3:PutObjectAcl",
-        "s3:DeleteObject"
+        "s3:DeleteObject",
+        "s3:GetObject"
       ],
       "Resource": [
         "arn:aws:s3:::media.avrae.io*",
