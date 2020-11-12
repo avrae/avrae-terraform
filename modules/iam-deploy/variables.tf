@@ -14,3 +14,6 @@ variable "region" {
   description = "AWS region"
 }
 
+variable "s3_prefix" {
+  description = "shared S3 prefix for service buckets"
+}

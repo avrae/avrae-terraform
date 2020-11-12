@@ -16,54 +16,63 @@ resource "aws_iam_policy" "service_deploy_policy" {
 {
   "Version": "2012-10-17",
   "Statement": [
-   {
-     "Effect": "Allow",
-     "Action": [
-       "ecr:*"
-     ],
-     "Resource": [
-       "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/taine",
-       "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/avrae-bot",
-       "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/avrae-service",
-       "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/avrae-io"
-     ]
-   },
-   {
-     "Effect": "Allow",
-     "Action": [
-       "ecr:GetAuthorizationToken"
-     ],
-     "Resource": [
-       "*"
-     ]
-   },
-   {
-     "Effect": "Allow",
-     "Action": [
-       "ecs:DescribeServices",
-       "ecs:Update*"
-     ],
-     "Resource": [
-       "*"
-     ]
-   },
     {
-        "Effect": "Allow",
-        "Action": [
-            "s3:ListBucket",
-            "s3:PutObject",
-            "s3:PutObjectTagging",
-            "s3:PutObjectAcl",
-            "s3:DeleteObject"
-        ],
-        "Resource": [
-            "arn:aws:s3:::media.avrae.io*"
-        ]
+      "Effect": "Allow",
+      "Action": [
+        "ecr:*"
+      ],
+      "Resource": [
+        "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/taine",
+        "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/avrae-bot",
+        "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/avrae-service",
+        "arn:aws:ecr:${var.region}:${var.account_id}:repository/avrae/avrae-io"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecr:GetAuthorizationToken"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecs:DescribeServices",
+        "ecs:Update*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:PutObject",
+        "s3:PutObjectTagging",
+        "s3:PutObjectAcl",
+        "s3:DeleteObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::media.avrae.io*",
+        "arn:aws:s3:::${var.s3_prefix}-${var.region}-${var.service}-${var.env}*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "lambda:UpdateFunctionCode"
+      ],
+      "Resource": [
+        "arn:aws:lambda:${var.region}:${var.account_id}:function:${var.service}-${var.env}*"
+      ]
     }
   ]
 }
 EOF
-
 }
 
 resource "aws_iam_user_policy_attachment" "service_deploy_policy_attach" {
