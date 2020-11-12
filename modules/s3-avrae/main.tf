@@ -52,6 +52,13 @@ resource "aws_s3_bucket" "lambda_archives" {
   })
 }
 
+resource "aws_s3_bucket_public_access_block" "lambda_archives" {
+  bucket                  = aws_s3_bucket.lambda_archives.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
 # ==== VPC ====
 # VPC: avrae route tables
 data "aws_route_tables" "avrae_route_tables" {
