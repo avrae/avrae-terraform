@@ -734,7 +734,7 @@ module "redis_avrae" {
     module.avrae_service_ecs.security_group_id,
     data.aws_security_group.gamelog_avrae_lambda.id,  # connect to redis from gamelog lambda
   ]
-  num_redis_whitelist_sgs      = 3
+  num_redis_whitelist_sgs      = 4
   automatic_failover           = "true"
   engine_version               = "4.0.10"
   cluster_parameter_group_name = "default.redis4.0"
