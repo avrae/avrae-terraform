@@ -711,6 +711,11 @@ resource "aws_route53_zone" "service" {
   }
 }
 
+# game log lambda access
+data "aws_security_group" "gamelog_avrae_lambda" {
+  name = "game-log-lambda-${var.env}"
+}
+
 # Redis
 module "redis_avrae" {
   source  = "app.terraform.io/Fandom/redis/aws"
@@ -727,8 +732,9 @@ module "redis_avrae" {
     module.avrae_bot_ecs.security_group_id,
     module.avrae_bot_nightly_ecs.security_group_id,
     module.avrae_service_ecs.security_group_id,
+    data.aws_security_group.gamelog_avrae_lambda.id,  # connect to redis from gamelog lambda
   ]
-  num_redis_whitelist_sgs      = 3
+  num_redis_whitelist_sgs      = 4
   automatic_failover           = "true"
   engine_version               = "4.0.10"
   cluster_parameter_group_name = "default.redis4.0"
