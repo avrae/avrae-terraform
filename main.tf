@@ -440,6 +440,10 @@ module "avrae_bot_ecs" {
       name = "MONSTER_TOKEN_ENDPOINT"
       value = module.s3_avrae.token_s3_endpoint
     },
+//    {  // todo uncomment this on prod release
+//      name = "DDB_GAMELOG_ENDPOINT"
+//      value = "https://${data.aws_api_gateway_rest_api.gamelog_rest_api.id}.execute-api.${var.region}.amazonaws.com/v1"
+//    },
   ]
   secrets = [
     {
@@ -588,6 +592,10 @@ module "avrae_bot_nightly_ecs" {
     {
       name = "MONSTER_TOKEN_ENDPOINT"
       value = module.s3_avrae.token_s3_endpoint
+    },
+    {
+      name = "DDB_GAMELOG_ENDPOINT"
+      value = "https://${data.aws_api_gateway_rest_api.gamelog_rest_api.id}.execute-api.${var.region}.amazonaws.com/v1"
     },
   ]
   secrets = [
@@ -916,4 +924,8 @@ module "s3_avrae" {
   vpc_id        = module.ecs_vpc.aws_vpc_main_id
   s3_prefix     = var.s3_prefix
   subnet_ids    = module.ecs_vpc.private_subnet_ids
+}
+
+data "aws_api_gateway_rest_api" "gamelog_rest_api" {
+  name = "game-log-gamelog-rest-${var.env}"
 }
