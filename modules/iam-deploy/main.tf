@@ -41,6 +41,7 @@ resource "aws_iam_policy" "service_deploy_policy" {
       "Effect": "Allow",
       "Action": [
         "ecs:DescribeServices",
+        "ecs:DescribeTaskDefinition",
         "ecs:Update*"
       ],
       "Resource": [
