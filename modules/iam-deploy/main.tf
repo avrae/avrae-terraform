@@ -38,6 +38,20 @@ resource "aws_iam_policy" "service_deploy_policy" {
       ]
     },
     {
+       "Sid":"PassRolesInTaskDefinition",
+       "Effect":"Allow",
+       "Action":[
+          "iam:PassRole"
+       ],
+       "Resource":[
+          "arn:aws:iam:::role/taine-live-ecs-role",
+          "arn:aws:iam:::role/avrae-bot-live-ecs-role",
+          "arn:aws:iam:::role/avrae-bot-nightly-live-ecs-role",
+          "arn:aws:iam:::role/avrae-service-live-ecs-role",
+          "arn:aws:iam:::role/avrae-io-live-ecs-role"
+       ]
+    },
+    {
       "Effect": "Allow",
       "Action": [
         "ecs:DescribeServices",
