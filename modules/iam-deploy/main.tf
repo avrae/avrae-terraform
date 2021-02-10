@@ -44,11 +44,11 @@ resource "aws_iam_policy" "service_deploy_policy" {
           "iam:PassRole"
        ],
        "Resource":[
-          "arn:aws:iam:::role/taine-live-ecs-role",
-          "arn:aws:iam:::role/avrae-bot-live-ecs-role",
-          "arn:aws:iam:::role/avrae-bot-nightly-live-ecs-role",
-          "arn:aws:iam:::role/avrae-service-live-ecs-role",
-          "arn:aws:iam:::role/avrae-io-live-ecs-role"
+          "arn:aws:iam::${var.account_id}:role/taine-live-ecs-role",
+          "arn:aws:iam::${var.account_id}:role/avrae-bot-live-ecs-role",
+          "arn:aws:iam::${var.account_id}:role/avrae-bot-nightly-live-ecs-role",
+          "arn:aws:iam::${var.account_id}:role/avrae-service-live-ecs-role",
+          "arn:aws:iam::${var.account_id}:role/avrae-io-live-ecs-role"
        ]
     },
     {
