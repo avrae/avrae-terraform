@@ -42,6 +42,7 @@ resource "aws_iam_policy" "service_deploy_policy" {
       "Action": [
         "ecs:DescribeServices",
         "ecs:DescribeTaskDefinition",
+        "ecs:RegisterTaskDefinition",
         "ecs:Update*"
       ],
       "Resource": [
