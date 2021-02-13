@@ -491,8 +491,8 @@ module "avrae_bot_ecs" {
   # restart container instantly on deploy
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
-  instance_count                     = 6  # MUST EQUAL NUM_CLUSTERS ENV VAR!
-  max_instance_count                 = 6
+  instance_count                     = 0  # MUST EQUAL NUM_CLUSTERS ENV VAR!
+  max_instance_count                 = 0
 
   # 1 vCPU, 8GB RAM per cluster
   fargate_cpu    = 1024
