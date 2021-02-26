@@ -563,11 +563,11 @@ module "avrae_bot_nightly_ecs" {
     },
     {
       name = "NUM_CLUSTERS"
-      value  = "2"
+      value  = "1"
     },
     {
       name = "NUM_SHARDS"  # explicitly set num shards for clustering test
-      value  = "10"
+      value  = "2"
     },
     {
       name = "DDB_AUTH_SERVICE_URL"
@@ -636,8 +636,8 @@ module "avrae_bot_nightly_ecs" {
   # restart container instantly on deploy
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
-  instance_count                     = 2  # MUST EQUAL NUM_CLUSTERS ENV VAR!
-  max_instance_count                 = 2
+  instance_count                     = 1  # MUST EQUAL NUM_CLUSTERS ENV VAR!
+  max_instance_count                 = 1
 
   # 1 vCPU, 4GB RAM
   fargate_cpu    = 1024
