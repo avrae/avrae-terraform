@@ -418,7 +418,11 @@ module "avrae_bot_ecs" {
     },
     {
       name = "NUM_CLUSTERS"
-      value  = "6"
+      value  = "8"
+    },
+    {
+      name = "NUM_SHARDS"  # 3/9: set to 256 for scaleup on discord's end, todo remove to allow autoscaling
+      value  = "256"
     },
     {
       name = "DDB_AUTH_SERVICE_URL"
@@ -491,8 +495,8 @@ module "avrae_bot_ecs" {
   # restart container instantly on deploy
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
-  instance_count                     = 6  # MUST EQUAL NUM_CLUSTERS ENV VAR!
-  max_instance_count                 = 6
+  instance_count                     = 8  # MUST EQUAL NUM_CLUSTERS ENV VAR!
+  max_instance_count                 = 8
 
   # 1 vCPU, 8GB RAM per cluster
   fargate_cpu    = 1024
